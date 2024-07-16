@@ -4,13 +4,20 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../laravel-superniftycms"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.1",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "livewire/livewire": "^3.0"
+        "livewire/livewire": "^3.0",
+        "superniftydev/laravel-superniftycms": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
