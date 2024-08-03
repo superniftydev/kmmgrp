@@ -1,0 +1,222 @@
+
+
+.model {
+
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    opacity: 0;
+    transition: opacity 250ms ease-in-out;
+    &.loaded { opacity: 1; }
+
+    model-viewer {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-grow: 1;
+
+    }
+
+    model-viewer::part(default-progress-bar) {
+        display: none;
+    }
+
+
+
+}
+
+body[data-admin] { #modelviewer .controls #settings { display: flex; } }
+body[data-topic_url^='products'] main {
+
+
+
+}
+
+
+
+
+#modelViewerControls.controls {
+    position: fixed;
+    top: 6rem;
+    right: 1rem;
+    font-size: .5em;
+    color: rgba(255,255,255,.5);
+    padding: 1rem .5rem .5rem .5rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999999;
+
+    background-color: rgba(255,255,255,.1);
+    border-radius: .25rem;
+    border: 1px solid rgba(255,255,255,.1);
+
+    transition: all 250ms ease-in-out;
+    pointer-events: none;
+    opacity: 0;
+
+    #colorInput {
+        position: absolute;
+        top: -20px;
+        right: calc(50% - 20px);
+    }
+
+    input[type="color" i] {
+        border-radius: 50%;
+        inline-size: 40px;
+        block-size: 40px;
+        padding: 2px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #fff;
+    }
+
+    input[type="color" i]::-webkit-color-swatch-wrapper {
+        padding: 1px;
+    }
+    input[type="color" i]::-webkit-color-swatch {
+        border-radius: 50%;
+    }
+    input[type="color" i]::-moz-color-swatch {
+        border-radius: 50%;
+    }
+
+    .ranger {
+
+        display: flex;
+        align-items: center;
+        padding: .25rem 0;
+        position: relative;
+        height: 1.5rem;
+
+        &:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: attr(data-label);
+            font-size: .5em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            content: attr(data-value);
+            font-size: .5em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        &[data-label='exposure'] { display: none; }
+
+        input {
+            position: relative;
+            appearance: none;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,1);
+            outline: none;
+            opacity: 0.5;
+            transition: opacity 250ms ease-in-out;
+            border-radius: .25em;
+
+            &:hover { opacity: 1; }
+
+            &::-webkit-slider-thumb {
+                appearance: none;
+                width: 10px;
+                height: 10px;
+                background: #fff;
+                cursor: pointer;
+                border-radius: 100%;
+            }
+
+            &::-moz-range-thumb {
+                width: 10px;
+                height: 10px;
+                background: #fff;
+                cursor: pointer;
+                border-radius: 100%;
+            }
+
+        }
+
+        i {
+            font-style: normal;
+            padding: .25em;
+            background-color: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.1);
+            width: 50px;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-left: .5em;
+            height: 1rem;
+            display: none;
+        }
+
+    }
+
+
+    #downloadPosterButton,
+    #reset,
+    #settings {
+        color: rgba(255,255,255,.5);
+        font-weight: 400;
+        font-size: .875rem;
+        display: flex;
+        width: 1rem;
+        margin: 0 0 0 auto;
+        transition: all 250ms ease-in-out;
+        font-style: normal;
+        line-height: 1;
+        cursor: pointer;
+
+        &:before {
+            font-family: 'Material Symbols Outlined';
+            font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 22;
+            content: '\eb2d';
+        }
+
+        &:hover {
+            color: rgba(255,255,255, 1);
+        }
+    }
+
+    #downloadPosterButton {
+        &:before {
+            content: '\e412';
+        }
+    }
+
+
+    #settings {
+        position: absolute;
+        bottom: .5rem;
+        right: 0;
+        font-size: .5rem;
+        display: none;
+
+        &:before {
+            content: '\e14d';
+        }
+
+    }
+
+
+
+
+}
+
+body[data-admin][data-active_model_id] #modelViewerControls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+

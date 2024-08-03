@@ -1,0 +1,1079 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+:root {
+  --color-darkGray: #232527;
+  --color-darkBlue: #0B579E;
+  --color-white: #FFF;
+  --color-black: #000;
+  --color-gold: #FC0;
+  --menu-width-out: 200px;
+  --menu-padding-out: 12px 30px;
+  --menu-width-hover: 210px;
+  --menu-padding-hover: 12px 20px 12px 35px;
+  --menu-margin-hover: 0 -10px 0 0;
+  --menu-width-active: 210px;
+  --menu-padding-active: 14px 20px 14px 30px;
+  --menu-margin-active: 0 -10px 0 0;
+  --menu-box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.46);
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-darkBlue);
+  font-family: Roboto, sans-serif;
+  color: var(--color-white);
+  transition: background-color 250ms ease-in-out;
+}
+
+ul {
+  list-style-type: none;
+}
+
+#welcome-w {
+  position: absolute;
+  bottom: 0;
+  left: -105vw;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: all 250ms ease-in-out;
+  background-color: rgba(11, 87, 158, 0.5);
+  z-index: 51;
+  padding: 0 325px 2rem 225px;
+}
+#welcome-w h1 {
+  font-family: Poppins, sans-serif;
+  font-weight: 900;
+  font-size: 8vw;
+  letter-spacing: -0.025em;
+  line-height: 0.75;
+  margin: 0 0 2vw 0;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.68);
+  text-transform: uppercase;
+}
+#welcome-w h2 {
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 3vw;
+  letter-spacing: -0.025em;
+  line-height: 0.75;
+  margin: 0;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.68);
+}
+
+.copyright {
+  color: var(--color-white);
+  font-size: 9px;
+  position: fixed;
+  bottom: 0;
+  right: 500px;
+  padding: 1rem;
+  z-index: 22222;
+  opacity: 0.25;
+  width: 200px;
+}
+
+#menu-w {
+  position: fixed;
+  transition: all ease 200ms;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  overflow-x: visible;
+  height: 100vh;
+  z-index: 999;
+  padding-right: 20px;
+}
+#menu-w #menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  list-style: none;
+  width: var(--menu-width-out);
+  background-color: rgb(35, 37, 39);
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  box-shadow: var(--menu-box-shadow);
+}
+#menu-w #menu li {
+  font-family: "Poppins", sans-serif;
+  display: block;
+  width: 100%;
+  margin: 0;
+  line-height: 1.1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-white);
+  background-color: rgb(35, 37, 39);
+  padding: var(--menu-padding-out);
+  transition: all 250ms ease-in-out;
+  cursor: pointer;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+#menu-w #menu li:hover {
+  background: var(--color-darkBlue);
+  margin: var(--menu-margin-hover);
+  width: var(--menu-width-hover);
+  padding: var(--menu-padding-hover);
+  box-shadow: var(--menu-box-shadow);
+}
+#menu-w #menu li:first-child {
+  padding: 2rem;
+}
+#menu-w #menu li:first-child svg {
+  fill: #fff;
+  transition: all 250ms ease-in-out;
+}
+#menu-w #menu li:first-child:hover {
+  width: 100%;
+  margin: 0;
+  background-color: rgb(35, 37, 39);
+  padding: 2rem;
+}
+#menu-w #menu li:first-child:hover svg {
+  transform: scale(1.05);
+}
+
+#content {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100vh;
+  background: var(--color-darkGray);
+  color: #fff;
+  z-index: 55;
+  box-shadow: -2px 2px 4px 0px rgba(0, 0, 0, 0.46);
+  overflow-y: auto;
+}
+#content .ow {
+  position: absolute;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  transition: right 500ms ease-in-out, opacity 250ms ease-in-out;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 0;
+}
+#content .ow .fix {
+  color: #f99;
+}
+#content .ow a,
+#content .ow a:link,
+#content .ow a:visited {
+  color: var(--color-gold);
+  font-weight: 900;
+}
+#content .ow a:hover,
+#content .ow a:active,
+#content .ow a:focus {
+  color: var(--color-white);
+}
+#content .ow h2 {
+  font-family: Poppins, sans-serif;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  color: #fff;
+}
+#content .ow ul {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+#content .ow ul li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  line-height: 17px;
+  padding: 0 0 0 2rem;
+}
+#content .ow ul li:before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' fill='%23fc0'%3E%3C!--! Font Awesome Pro 6.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc.--%3E%3Cpath d='m438.6 278.6-160 160c-6.2 6.3-14.4 9.4-22.6 9.4s-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L338.8 288H32C14.33 288 .002 273.7.002 256S14.33 224 32 224h306.8L233.4 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.45 12.55 12.45 32.75-.05 45.25z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 0.75rem;
+  background-repeat: no-repeat;
+  content: "";
+  width: 2rem;
+  height: 1rem;
+}
+#content .ow ul li strong {
+  display: block;
+  background-color: var(--color-gold);
+  color: var(--color-darkGray);
+  padding: 4px 8px;
+  border-radius: 20px;
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+#content .ow ul li span {
+  display: block;
+  color: #fff;
+  padding: 4px;
+  max-width: 99%;
+}
+#content .ow button,
+#content .ow .btn,
+#content .ow a.btn,
+#content .ow a.btn:link,
+#content .ow a.btn:visited {
+  position: relative;
+  display: block;
+  padding: 1rem 2rem 3rem 0;
+  color: var(--color-gold);
+  margin: 2rem 0 0 0;
+  cursor: pointer;
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  text-decoration: none;
+  transition: all 250ms ease-in-out;
+  background-color: transparent;
+  text-align: left;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' fill='rgb(242,203,48)'%3E%3C!--! Font Awesome Pro 6.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc.--%3E%3Cpath d='m438.6 278.6-160 160c-6.2 6.3-14.4 9.4-22.6 9.4s-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L338.8 288H32C14.33 288 .002 273.7.002 256S14.33 224 32 224h306.8L233.4 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.45 12.55 12.45 32.75-.05 45.25z'/%3E%3C/svg%3E");
+  background-position: bottom left;
+  background-size: 2.5rem;
+  background-repeat: no-repeat;
+  border: none;
+  border-top: 1px dotted var(--color-gold);
+}
+#content .ow .btn:active,
+#content .ow .btn:hover,
+#content .ow .btn:focus,
+#content .ow a.btn:active,
+#content .ow a.btn:hover,
+#content .ow a.btn:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' fill='rgb(255,255,255)'%3E%3C!--! Font Awesome Pro 6.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc.--%3E%3Cpath d='m438.6 278.6-160 160c-6.2 6.3-14.4 9.4-22.6 9.4s-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L338.8 288H32C14.33 288 .002 273.7.002 256S14.33 224 32 224h306.8L233.4 118.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l160 160c12.45 12.55 12.45 32.75-.05 45.25z'/%3E%3C/svg%3E");
+  color: #fff;
+}
+
+#map-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: auto;
+  width: 100vw;
+  z-index: 50;
+  /* facility illustration */
+}
+#map-container svg {
+  height: 100%;
+  width: auto;
+  cursor: move;
+  overflow: visible;
+  pointer-events: auto;
+  fill: rgba(255, 255, 255, 0);
+}
+#map-container .proxy {
+  fill: none;
+  stroke: none;
+}
+#map-container .svg-background {
+  fill: none;
+  stroke: none;
+}
+#map-container #facility {
+  font-family: Roboto, sans-serif;
+}
+#map-container #facility .label {
+  font-size: 3px;
+  fill: var(--color-white);
+  white-space: pre;
+}
+#map-container #branding_address {
+  font-size: 16px;
+  fill: rgba(255, 255, 255, 0.75);
+  white-space: pre;
+  text-align: center;
+}
+#map-container text {
+  font-family: "Roboto", sans-serif;
+  font-size: 3px;
+  line-height: 6px;
+  white-space: pre;
+  font-weight: bold;
+  letter-spacing: 0;
+}
+#map-container .parking path {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.7267;
+}
+#map-container .grass {
+  fill: rgba(255, 255, 255, 0.1);
+}
+#map-container .trees path {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+#map-container .building {
+  fill: rgba(255, 255, 255, 0.05);
+}
+#map-container .rooms path,
+#map-container .areas {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 0.5;
+}
+#map-container .shipping .areas {
+  stroke: rgba(0, 0, 0, 0.5);
+}
+#map-container .rooms text {
+  fill: rgba(255, 255, 255, 0.1);
+}
+#map-container .street-address {
+  fill: rgba(255, 255, 255, 0.1);
+  font-size: 16px;
+}
+#map-container .kmm-logo {
+  fill: rgba(255, 255, 255, 0.1);
+}
+#map-container .auto,
+#map-container .auto-paint,
+#map-container .auto-glass {
+  fill: rgba(255, 255, 255, 0.1);
+}
+#map-container .section {
+  pointer-events: auto;
+  fill: rgba(255, 255, 255, 0);
+  transition: all 250ms ease-in-out;
+}
+#map-container .section .outline {
+  stroke: rgba(0, 0, 0, 0);
+  stroke-width: 2;
+}
+#map-container .section .machines {
+  fill: rgba(255, 255, 255, 0.15);
+  transition: all 250ms ease-in-out;
+}
+#map-container .section .benches {
+  fill: rgba(255, 255, 255, 0.15);
+  transition: all 250ms ease-in-out;
+}
+#map-container .section .labels text {
+  fill: rgba(255, 255, 255, 0.15);
+  transition: all 250ms ease-in-out;
+}
+#map-container .section .areas {
+  stroke: rgb(255, 255, 255);
+}
+#map-container .section .shipping-areas {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+#map-container .section .circle circle {
+  transition: all 250ms ease-in-out;
+  fill: var(--color-darkBlue);
+}
+#map-container .section .circle text {
+  transition: all 250ms ease-in-out;
+  font-size: 10px;
+  line-height: 10px;
+  fill: rgb(255, 255, 255);
+}
+#map-container .section .circle text .eyebrow {
+  font-size: 5px;
+}
+#map-container .section:hover .outline {
+  stroke: var(--color-white);
+}
+#map-container .section:hover .circle circle {
+  fill: rgb(255, 255, 255);
+}
+#map-container .section:hover .circle text {
+  fill: var(--color-darkBlue);
+}
+#map-container .section:hover .labels text {
+  fill: rgb(255, 255, 255);
+}
+#map-container .section:hover .machines {
+  opacity: 1;
+}
+#map-container .section:hover .benches {
+  opacity: 0.5;
+}
+#map-container .section:hover .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+
+body.welcome #menu-w #menu li[data-section=welcome] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.welcome #welcome-w {
+  left: 0;
+}
+body.welcome #map-container {
+  padding: 1vw 0 0 1vw;
+}
+body.welcome #content #content-welcome {
+  right: 0;
+  opacity: 1;
+}
+body.rand #menu-w #menu li[data-section=rand] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.rand #map-container g#rand .outline {
+  stroke: var(--color-gold);
+}
+body.rand #map-container g#rand .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.rand #map-container g#rand .circle text {
+  fill: var(--color-darkBlue);
+}
+body.rand #map-container g#rand .labels text {
+  fill: var(--color-darkBlue);
+}
+body.rand #map-container g#rand .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.rand #map-container g#rand .benches {
+  opacity: 0.5;
+}
+body.rand #map-container g#rand .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.rand #content #content-rand {
+  right: 0;
+  opacity: 1;
+}
+body.guidewire #menu-w #menu li[data-section=guidewire] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.guidewire #map-container g#guidewire .outline {
+  stroke: var(--color-gold);
+}
+body.guidewire #map-container g#guidewire .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.guidewire #map-container g#guidewire .circle text {
+  fill: var(--color-darkBlue);
+}
+body.guidewire #map-container g#guidewire .labels text {
+  fill: var(--color-darkBlue);
+}
+body.guidewire #map-container g#guidewire .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.guidewire #map-container g#guidewire .benches {
+  opacity: 0.5;
+}
+body.guidewire #map-container g#guidewire .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.guidewire #content #content-guidewire {
+  right: 0;
+  opacity: 1;
+}
+body.lasers #menu-w #menu li[data-section=lasers] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.lasers #map-container g#lasers .outline {
+  stroke: var(--color-gold);
+}
+body.lasers #map-container g#lasers .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.lasers #map-container g#lasers .circle text {
+  fill: var(--color-darkBlue);
+}
+body.lasers #map-container g#lasers .labels text {
+  fill: var(--color-darkBlue);
+}
+body.lasers #map-container g#lasers .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.lasers #map-container g#lasers .benches {
+  opacity: 0.5;
+}
+body.lasers #map-container g#lasers .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.lasers #content #content-lasers {
+  right: 0;
+  opacity: 1;
+}
+body.hybridgrinding #menu-w #menu li[data-section=hybridgrinding] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.hybridgrinding #map-container g#hybridgrinding .outline {
+  stroke: var(--color-gold);
+}
+body.hybridgrinding #map-container g#hybridgrinding .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.hybridgrinding #map-container g#hybridgrinding .circle text {
+  fill: var(--color-darkBlue);
+}
+body.hybridgrinding #map-container g#hybridgrinding .labels text {
+  fill: var(--color-darkBlue);
+}
+body.hybridgrinding #map-container g#hybridgrinding .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.hybridgrinding #map-container g#hybridgrinding .benches {
+  opacity: 0.5;
+}
+body.hybridgrinding #map-container g#hybridgrinding .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.hybridgrinding #content #content-hybridgrinding {
+  right: 0;
+  opacity: 1;
+}
+body.infeed #menu-w #menu li[data-section=infeed] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.infeed #map-container g#infeed .outline {
+  stroke: var(--color-gold);
+}
+body.infeed #map-container g#infeed .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.infeed #map-container g#infeed .circle text {
+  fill: var(--color-darkBlue);
+}
+body.infeed #map-container g#infeed .labels text {
+  fill: var(--color-darkBlue);
+}
+body.infeed #map-container g#infeed .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.infeed #map-container g#infeed .benches {
+  opacity: 0.5;
+}
+body.infeed #map-container g#infeed .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.infeed #content #content-infeed {
+  right: 0;
+  opacity: 1;
+}
+body.cncodid #menu-w #menu li[data-section=cncodid] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.cncodid #map-container g#cncodid .outline {
+  stroke: var(--color-gold);
+}
+body.cncodid #map-container g#cncodid .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.cncodid #map-container g#cncodid .circle text {
+  fill: var(--color-darkBlue);
+}
+body.cncodid #map-container g#cncodid .labels text {
+  fill: var(--color-darkBlue);
+}
+body.cncodid #map-container g#cncodid .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.cncodid #map-container g#cncodid .benches {
+  opacity: 0.5;
+}
+body.cncodid #map-container g#cncodid .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.cncodid #content #content-cncodid {
+  right: 0;
+  opacity: 1;
+}
+body.shipping #menu-w #menu li[data-section=shipping] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.shipping #map-container g#shipping .outline {
+  stroke: var(--color-gold);
+}
+body.shipping #map-container g#shipping .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.shipping #map-container g#shipping .circle text {
+  fill: var(--color-darkBlue);
+}
+body.shipping #map-container g#shipping .labels text {
+  fill: var(--color-darkBlue);
+}
+body.shipping #map-container g#shipping .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.shipping #map-container g#shipping .benches {
+  opacity: 0.5;
+}
+body.shipping #map-container g#shipping .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.shipping #content #content-shipping {
+  right: 0;
+  opacity: 1;
+}
+body.qualitymedclean #menu-w #menu li[data-section=qualitymedclean] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.qualitymedclean #map-container g#qualitymedclean .outline {
+  stroke: var(--color-gold);
+}
+body.qualitymedclean #map-container g#qualitymedclean .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.qualitymedclean #map-container g#qualitymedclean .circle text {
+  fill: var(--color-darkBlue);
+}
+body.qualitymedclean #map-container g#qualitymedclean .labels text {
+  fill: var(--color-darkBlue);
+}
+body.qualitymedclean #map-container g#qualitymedclean .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.qualitymedclean #map-container g#qualitymedclean .benches {
+  opacity: 0.5;
+}
+body.qualitymedclean #map-container g#qualitymedclean .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.qualitymedclean #content #content-qualitymedclean {
+  right: 0;
+  opacity: 1;
+}
+body.bargrinding #menu-w #menu li[data-section=bargrinding] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.bargrinding #map-container g#bargrinding .outline {
+  stroke: var(--color-gold);
+}
+body.bargrinding #map-container g#bargrinding .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.bargrinding #map-container g#bargrinding .circle text {
+  fill: var(--color-darkBlue);
+}
+body.bargrinding #map-container g#bargrinding .labels text {
+  fill: var(--color-darkBlue);
+}
+body.bargrinding #map-container g#bargrinding .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.bargrinding #map-container g#bargrinding .benches {
+  opacity: 0.5;
+}
+body.bargrinding #map-container g#bargrinding .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.bargrinding #content #content-bargrinding {
+  right: 0;
+  opacity: 1;
+}
+body.cncthrufeed #menu-w #menu li[data-section=cncthrufeed] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.cncthrufeed #map-container g#cncthrufeed .outline {
+  stroke: var(--color-gold);
+}
+body.cncthrufeed #map-container g#cncthrufeed .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.cncthrufeed #map-container g#cncthrufeed .circle text {
+  fill: var(--color-darkBlue);
+}
+body.cncthrufeed #map-container g#cncthrufeed .labels text {
+  fill: var(--color-darkBlue);
+}
+body.cncthrufeed #map-container g#cncthrufeed .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.cncthrufeed #map-container g#cncthrufeed .benches {
+  opacity: 0.5;
+}
+body.cncthrufeed #map-container g#cncthrufeed .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.cncthrufeed #content #content-cncthrufeed {
+  right: 0;
+  opacity: 1;
+}
+body.qualityaerospace #menu-w #menu li[data-section=qualityaerospace] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.qualityaerospace #map-container g#qualityaerospace .outline {
+  stroke: var(--color-gold);
+}
+body.qualityaerospace #map-container g#qualityaerospace .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.qualityaerospace #map-container g#qualityaerospace .circle text {
+  fill: var(--color-darkBlue);
+}
+body.qualityaerospace #map-container g#qualityaerospace .labels text {
+  fill: var(--color-darkBlue);
+}
+body.qualityaerospace #map-container g#qualityaerospace .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.qualityaerospace #map-container g#qualityaerospace .benches {
+  opacity: 0.5;
+}
+body.qualityaerospace #map-container g#qualityaerospace .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.qualityaerospace #content #content-qualityaerospace {
+  right: 0;
+  opacity: 1;
+}
+body.edm #menu-w #menu li[data-section=edm] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.edm #map-container g#edm .outline {
+  stroke: var(--color-gold);
+}
+body.edm #map-container g#edm .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.edm #map-container g#edm .circle text {
+  fill: var(--color-darkBlue);
+}
+body.edm #map-container g#edm .labels text {
+  fill: var(--color-darkBlue);
+}
+body.edm #map-container g#edm .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.edm #map-container g#edm .benches {
+  opacity: 0.5;
+}
+body.edm #map-container g#edm .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.edm #content #content-edm {
+  right: 0;
+  opacity: 1;
+}
+body.cncswiss #menu-w #menu li[data-section=cncswiss] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.cncswiss #map-container g#cncswiss .outline {
+  stroke: var(--color-gold);
+}
+body.cncswiss #map-container g#cncswiss .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.cncswiss #map-container g#cncswiss .circle text {
+  fill: var(--color-darkBlue);
+}
+body.cncswiss #map-container g#cncswiss .labels text {
+  fill: var(--color-darkBlue);
+}
+body.cncswiss #map-container g#cncswiss .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.cncswiss #map-container g#cncswiss .benches {
+  opacity: 0.5;
+}
+body.cncswiss #map-container g#cncswiss .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.cncswiss #content #content-cncswiss {
+  right: 0;
+  opacity: 1;
+}
+body.hmc #menu-w #menu li[data-section=hmc] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.hmc #map-container g#hmc .outline {
+  stroke: var(--color-gold);
+}
+body.hmc #map-container g#hmc .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.hmc #map-container g#hmc .circle text {
+  fill: var(--color-darkBlue);
+}
+body.hmc #map-container g#hmc .labels text {
+  fill: var(--color-darkBlue);
+}
+body.hmc #map-container g#hmc .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.hmc #map-container g#hmc .benches {
+  opacity: 0.5;
+}
+body.hmc #map-container g#hmc .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.hmc #content #content-hmc {
+  right: 0;
+  opacity: 1;
+}
+body.vmc #menu-w #menu li[data-section=vmc] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.vmc #map-container g#vmc .outline {
+  stroke: var(--color-gold);
+}
+body.vmc #map-container g#vmc .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.vmc #map-container g#vmc .circle text {
+  fill: var(--color-darkBlue);
+}
+body.vmc #map-container g#vmc .labels text {
+  fill: var(--color-darkBlue);
+}
+body.vmc #map-container g#vmc .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.vmc #map-container g#vmc .benches {
+  opacity: 0.5;
+}
+body.vmc #map-container g#vmc .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.vmc #content #content-vmc {
+  right: 0;
+  opacity: 1;
+}
+body.millturn #menu-w #menu li[data-section=millturn] {
+  background: var(--color-gold);
+  color: var(--color-darkGray);
+  font-size: 18px;
+  font-weight: 500;
+  margin: var(--menu-margin-active);
+  width: var(--menu-width-active);
+  padding: var(--menu-padding-active);
+  box-shadow: var(--menu-box-shadow);
+}
+body.millturn #map-container g#millturn .outline {
+  stroke: var(--color-gold);
+}
+body.millturn #map-container g#millturn .circle circle {
+  fill: var(--color-gold);
+  stroke: #fff;
+  stroke-width: 8;
+  paint-order: stroke;
+}
+body.millturn #map-container g#millturn .circle text {
+  fill: var(--color-darkBlue);
+}
+body.millturn #map-container g#millturn .labels text {
+  fill: var(--color-darkBlue);
+}
+body.millturn #map-container g#millturn .machines {
+  opacity: 1;
+  fill: var(--color-gold);
+}
+body.millturn #map-container g#millturn .benches {
+  opacity: 0.5;
+}
+body.millturn #map-container g#millturn .areas {
+  stroke: rgba(255, 255, 255, 0.5);
+}
+body.millturn #content #content-millturn {
+  right: 0;
+  opacity: 1;
+}
+.map-instructions {
+    position: absolute;
+    top: 0;
+    background-color: var(--color-darkGray);
+    left: 200px;
+    right: 350px; 
+    text-align: center; 
+    font-weight: bold; 
+    box-shadow: -2px 2px 4px 0px rgba(0, 0, 0, 0.46);
+}
+/*# sourceMappingURL=style.css.map */

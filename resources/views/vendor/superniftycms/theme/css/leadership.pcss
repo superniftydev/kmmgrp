@@ -1,0 +1,224 @@
+
+
+body[data-topic_url^='about-us/leadership'] {
+
+
+    main {
+        min-height: revert;
+    }
+
+
+    .body {
+        margin: 0 auto;
+
+
+        a.social,
+        a.social:link,
+        a.social:visited {
+            display: flex;
+            align-items: center;
+            margin: 2em auto 4em 0;
+
+            span {
+
+                width: 4em;
+                height: 4em;
+                border-radius: 100%;
+                background-color: var(--color-kmm-light-blue-30);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: all 250ms ease-in-out;
+                margin-right: .5em;
+
+                svg {
+                    fill: var(--color-white);
+                    width: 60%;
+                    height: 60%;
+                }
+
+            }
+
+            i {
+                margin-top: .125em;
+                font-style: normal;
+            }
+
+        }
+
+        a.social:hover,
+        a.social:active,
+        a.social:focus {
+
+            span {
+                background-color: var(--color-kmm-light-blue-50);
+            }
+        }
+
+    }
+
+
+    .leadership-dots {
+
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2em;
+            user-select: none;
+        }
+
+
+        ul {
+
+            @apply grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+
+                a,
+                a:link,
+                a:visited {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                    h3, p {
+                        margin: 0 auto;
+                        text-align: center!important;
+                        color: var(--color-gray-600);
+                    }
+
+                    h3 {
+                        margin: 1rem auto 0 auto;
+                        font-size: 1.5em;
+                    }
+
+                    p {
+                        font-size: .875em;
+                    }
+
+                    img {
+                        box-shadow: 1px 2px 3px rgba(0,0,0,.25);
+                        border-radius: 100%;
+                        filter: grayscale(33%);
+                        transition: all 250ms ease-in-out;
+                    }
+
+
+                }
+
+                a:hover,
+                a:focus,
+                a:active {
+
+                    img {
+                        filter: grayscale(0);
+                        transform: scale(1.05);
+                    }
+                }
+
+            }
+        }
+
+        &.large {
+            padding: 1em 0 10em 0;
+
+
+            ul {
+
+                li {
+
+                    a,
+                    a:link,
+                    a:visited {
+
+                        img {
+                            width: 50vw;
+                            height: 50vw;
+                            min-width: 50vw;
+                            min-height: 50vw;
+                        }
+
+                        @screen sm {
+                            img {
+                                width: 20vw;
+                                height: 20vw;
+                                min-width: 20vw;
+                                min-height: 20vw;
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+
+        &.small {
+
+            background-color: var(--color-gray-100);
+            padding: 5em 0 10em 0;
+
+            ul {
+
+
+                li {
+
+                    a,
+                    a:link,
+                    a:visited {
+
+                        img {
+                            width: 50vw;
+                            height: 50vw;
+                            min-width: 50vw;
+                            min-height: 50vw;
+                        }
+
+                        @screen sm {
+                            img {
+                                width: 30vw;
+                                height: 30vw;
+                                min-width: 30vw;
+                                min-height: 30vw;
+                            }
+                        }
+
+                        @screen lg {
+                            img {
+                                width: 25vw;
+                                height: 25vw;
+                                min-width: 25vw;
+                                min-height: 25vw;
+                            }
+                        }
+
+                        @screen xl {
+                            img {
+                                width: 20vw;
+                                height: 20vw;
+                                min-width: 20vw;
+                                min-height: 20vw;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+

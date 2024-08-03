@@ -1,0 +1,42 @@
+<?php
+
+use Carbon\Carbon;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('superniftycms_topics', function (Blueprint $table) {
+            $table->uuid('id', 36)->primary();
+            $table->string('url', 500)->unique()->nullable();
+            $table->string('title',500)->default('Untitled Topic')->index();
+            $table->string('functionality', 250)->default('posts'); # posts|pages|forms|components|etc...
+            $table->string('blade', 250)->default('auto'); # if sn_config('app.default_blade_template') is not set
+            $table->json('content')->nullable();
+            $table->json('metas')->nullable();
+            $table->string('status', 250)->default('draft');
+            $table->uuid('created_by')->default('eaac9ce2-80ab-11ed-a1eb-0242ac120002');
+            $table->uuid('last_updated_by')->default('eaac9ce2-80ab-11ed-a1eb-0242ac120002');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('superniftycms_topics');
+    }
+};

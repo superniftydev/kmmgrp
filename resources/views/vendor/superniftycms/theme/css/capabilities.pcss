@@ -1,0 +1,150 @@
+
+
+body[data-topic_url^='capabilities/'] {
+
+    --header-color-one: var(--color-kmm-dark-blue-30);
+    --header-color-two: var(--color-kmm-dark-blue-30);
+
+
+    header {
+        background-color: var(--color-kmm-dark-blue-30);
+        margin-bottom: 0;
+
+        .model {
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 50px;
+            bottom: 50px;
+            right: 55vw;
+            z-index: 5;
+            height: 400px;
+            @screen lg { height: revert; }
+
+
+            model-viewer {
+                position:absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+        }
+
+        .content {
+
+            margin-top: 400px;
+
+            background-color: var(--color-kmm-dark-blue);
+            padding-bottom: 4em;
+            @screen lg {
+                padding-top: 4em;
+                margin-top: 0;
+            }
+
+            &:before {
+                border-color: transparent transparent var(--color-kmm-dark-blue) transparent;
+            }
+
+            h1 {
+
+                font-size: 10vw;
+
+                &:before {
+                    color: var(--color-green-500);
+                }
+            }
+
+            p {
+                font-size: .675em;
+                margin-bottom: .5em;
+            }
+
+            ul, ol {
+                padding: 0;
+
+                li {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    line-height: 1;
+                    font-size: .75em;
+                    padding: 1em 2em 1em 1em;
+                    border-top: 1px solid rgba(255,255,255,.1);
+                    border-bottom: 1px solid rgba(0,0,0,.1);
+                    margin: 0;
+                    transition: all 250ms ease-in-out;
+                    cursor: pointer;
+
+                    &:first-child { border-top: none; }
+                    &:last-child { border-bottom: none; }
+
+                    &:before {
+                        font-family: 'Material Symbols Outlined';
+                        font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 22;
+                        content: '\f1df';
+                        margin-right: 1em;
+                        transition: all 250ms ease-in-out;
+                    }
+
+                    &:hover {
+                        &:before {
+                            transform: scale(1.5);
+                        }
+                    }
+                }
+
+            }
+
+            a.cta,
+            a:link.cta,
+            a:visited.cta {
+
+                color: var(--color-white);
+                background-color: var(--color-kmm-dark-blue);
+            }
+
+            a:hover,
+            a:focus,
+            a:active {
+                background-color: var(--color-white);
+                color: var(--color-kmm-dark-blue);
+            }
+
+        }
+
+        @screen lg {
+
+            .model {
+                width: 65vw;
+                margin-right: -40vw;
+                model-viewer {
+
+                }
+            }
+
+            .content {
+                width: 50vw;
+                padding: 8em 5em 4em 4em;
+
+                h1 {
+                    font-size: 6vw;
+                }
+            }
+
+        }
+
+
+    }
+
+    .media-slice {
+        margin-bottom: 2em;
+    }
+
+
+
+}

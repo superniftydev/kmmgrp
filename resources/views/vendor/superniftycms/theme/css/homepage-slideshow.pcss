@@ -1,0 +1,204 @@
+
+
+:root {
+
+    --header-height-xs: 500px;
+    --header-height-sm: 600px;
+    --header-height-md: 700px;
+    --header-height-lg: 400px;
+    --header-height-xl: 600px;
+    --header-height-2xl: 700px;
+
+}
+
+header.swiper
+{
+
+    height: var(--header-height-xs);
+    @screen sm { height: var(--header-height-sm); }
+    @screen md { height: var(--header-height-md); }
+    @screen lg { height: var(--header-height-lg); }
+    @screen xl { height: var(--header-height-xl); }
+    @screen 2xl { height: var(--header-height-2xl); }
+    width: 100vw;
+
+    .swiper-wrapper {
+
+        width: 100%;
+
+        .swiper-slide {
+
+            width: 100%;
+
+                button {
+                    position: absolute;
+                    bottom: 1rem;
+                    right: 10vw;
+                    content: attr(data-cta);
+                    padding: 1rem 1.5rem 1rem 2rem;
+                    border-radius: .25rem;
+                    color: var(--color-white);
+                    background-color: var(--color-kmm-green);
+                    z-index: 999999;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    transition: all 250ms ease-in-out;
+
+                    &:after {
+                        display:inline-block;
+                        font-family: 'Material Symbols Outlined';
+                        font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 200, 'opsz' 22;
+                        content: '\f1df';
+                        margin: 2px 0 0 1em;
+                        transition: all 250ms ease-in-out;
+                    }
+
+                }
+
+                i {
+                    display: flex;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    content: '';
+                    height: 3.25rem;
+                    width: calc(100vw + 2rem);
+                    background-color: var(--color-kmm-dark-blue);
+                    z-index: 9999;
+                    transform: rotate(-2deg) skew(-2deg);
+                    margin: -2em -1em;
+                }
+
+                a,
+                a:link,
+                a:visited {
+
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    width: 100vw;
+                    height: 100%;
+                    padding: 0;
+                    background-color: var(--color-kmm-medium-blue);
+                    margin: 0;
+                    overflow: hidden;
+
+                    .img {
+                        position: relative;
+                        pointer-events: none;
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-end;
+                        padding: 0;
+                        z-index: 1;
+                        opacity: .5;
+                        height: 60%;
+                        filter: grayscale(1);
+                        img {
+                            min-width: 100%;
+                            min-height: 100%;
+                            object-fit: cover;
+                            object-position: center top;
+                        }
+                    }
+
+                    .content {
+                        position: relative;
+                        color: #fff;
+                        margin-left: auto;
+                        width: 100%;
+                        height: 40%;
+                        background-color: var(--color-kmm-dark-blue-30);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        z-index: 9999;
+                        padding: 2em;
+
+                        &:before {
+                            position: absolute;
+                            top: 0;
+                            left: -250px;
+                            width: 0;
+                            height: 0;
+                            border-style: solid;
+                            content: '';
+                            border-width: 0 0 100vh 250px;
+                            border-color: transparent transparent var(--color-kmm-dark-blue-30) transparent;
+                        }
+
+                        h1 {
+                            position: relative;
+                            font-size: 1.5em;
+                            margin: 0 auto .25em 0;
+
+                            &:before {
+                                position: absolute;
+                                top: -1em;
+                                left: 0;
+                                color: var(--color-kmm-dark-blue);
+                                font-size: .25em;
+                                font-weight: 900;
+                                content: attr(data-eyebrow);
+                            }
+                        }
+
+                        p {
+                            font-size: .675em;
+                            margin-bottom: .5em;
+                        }
+
+                        button {
+
+                            position: absolute;
+                            bottom: 0;
+                            right: 10vw;
+                            z-index: 10;
+
+                            color: var(--color-white);
+                            background-color: var(--color-kmm-dark-blue);
+                        }
+
+
+
+                    }
+
+
+                    @screen lg {
+
+                        flex-direction: row;
+
+                        .img {
+                            height: 100%;
+                            width: 60%;
+
+                            img {
+                                object-position: center bottom;
+                            }
+                        }
+
+                        .content {
+                            height: 100%;
+                            width: 40%;
+                            padding: 10em 5em 10em 2em;
+
+                            h1{
+                                font-size: 5vw;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+
+

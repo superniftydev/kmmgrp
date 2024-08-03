@@ -15,6 +15,12 @@
         @endauth
         @endif
 
+
+
+        <pre>
+        @php $superniftycms = config('superniftycms'); print_r($superniftycms); @endphp
+            </pre>
+
         Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
 
     </body>
