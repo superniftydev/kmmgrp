@@ -36,7 +36,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/tinymce@7.2.1/tinymce.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.1/index.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 
@@ -48,6 +48,7 @@
     'resources/views/vendor/superniftycms/admin/js/sn_mediaManager.js',
     'resources/views/vendor/superniftycms/admin/js/sn_topicManager.js',
     'resources/views/vendor/superniftycms/admin/js/sn_transcriptorField.js',
+    'resources/views/vendor/superniftycms/admin/js/sncms_dz.js',
 
 
 ])

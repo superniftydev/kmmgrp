@@ -103,17 +103,26 @@ $date = Carbon::now()->toDateTimeString();
     </div>
 
     <div class="img">
+        <?php
+        $accepted_array = config("superniftycms.uploads.accepted.".($field['aft'] ?? "images"));
+        if(is_array($accepted_array)) {
+            $accepted = implode("|", $accepted_array);
+            $accepted_error = implode(', ', array_keys($accepted_array)).' ONLY PLEASE!';
+        }
+        ?>
 
         <div
             id="featured_media_id"
-            class="sncms-dropper"
-            data-accepted="image/jpeg|image/png|image/gif"
+            class="mediazone drop single"
+            data-field="featured_media_id"
+            data-type="media"
+            data-aft="images"
+            data-accepted="{{ $accepted ?? '*' }}"
+            data-error="{{ $accepted_error ?? 'WRONG FILE TYPE!' }}"
             data-featured_media_id="{{ $topic->metas['featured_media_id'] ?? 'new' }}"
         >
         <img src="{{ sn_featured_img($topic->metas['featured_media_id'] ?? '') }}" alt="Featured Image">
-        <div id="progressBarW">
-            <div id="progressBar"></div>
-        </div>
+        <div class="progressBarW"><div class="progressBar"></div></div>
     </div>
         <h5>Featured Image</h5>
         <p>JPG, PNG or GIF images dropped above will be cropped and resized to {{ config('superniftycms.uploads.images.featured.dimensions') }} pixels.</p>

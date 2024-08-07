@@ -11,7 +11,6 @@ import Sortable from 'sortablejs';
 
 // window.Alpine = Alpine;
 // Alpine.start();
-window.scrollTo(0,1);
 
 window.sn_topics = {
 
@@ -47,7 +46,7 @@ window.sn_topics = {
 
     'topicFieldTemplates': document.getElementById('sn_topicFieldTemplates') ? document.getElementById('sn_topicFieldTemplates') : null,
 
-    'topicContentAndMetaFieldSorts': document.querySelectorAll('#topicEditForm .sort') ? document.querySelectorAll('#topicEditForm .sort') : null,
+    'topicContentFieldSorts': document.querySelectorAll('#topicEditForm .sort.content') ? document.querySelectorAll('#topicEditForm .sort.content') : null,
 
     'droppers': document.querySelectorAll('.dropper'),
 
@@ -58,12 +57,9 @@ window.sn_topics = {
         else {
             document.body.removeAttribute('data-display_topic_save_button');
         }
-        document.body.dataset.blade = document.getElementById('topicBlade').value;
-
-
     },
 
-    'saveTopic': (e) => {
+    'saveTopic': () => {
         let data = sn_topics.constructTopicDataObject();
         console.log('data being sent to server: ', data);
 
@@ -263,7 +259,7 @@ window.sn_topics = {
         document.getElementById('topicURL').value = data['url']
         /* history.pushState({},"", data['url']); */
 
-        data['blade'] = document.getElementById('topicBlade').value;
+        data['blade'] = 'auto'; // document.getElementById('topicBlade').value;
 
         let contentFields = document.querySelectorAll("#topicEditForm .sort.content .snfw");
         if(contentFields){
@@ -284,11 +280,11 @@ window.sn_topics = {
                     content[field['name']]['type'] = 'richtext';
                     content[field['name']]['value'] = contentFields[i].querySelector('.editor.richtext').innerHTML;
                 }
-                else if(contentFields[i].querySelector('.dropzone')){
+                else if(contentFields[i].querySelector('.mediazone')){
                     content[field['name']]['type'] = 'media';
                     content[field['name']]['aft'] = contentFields[i].dataset.aft;
                     let media_sort = [];
-                    let media= contentFields[i].querySelectorAll('.dz-preview');
+                    let media= contentFields[i].querySelectorAll('.mz-preview');
                     if(media){
                         for (let m = 0; m < media.length; m++) {
                             media_sort.push(media[m].dataset.media_id);
@@ -334,6 +330,8 @@ window.sn_topics = {
 
         data['sn_content'] = content; /* 'sn_' prefix added to remove conflict with Laravel's protected $request->content property */
         data['metas'] = metas;
+
+        console.log('----> constructTopicDataObject: ', data);
         return data;
     },
 
@@ -379,8 +377,8 @@ window.sn_topics = {
     },
 
 
-    'initSortTopicContentOrMetaFields':  (target) => {
-        Sortable.create(target, {
+    'initSortTopicContentFields':  (target) => {
+        window.contentSort = Sortable.create(target, {
             draggable: ".snfw",
             handle: ".settings .h",
             group: {
@@ -400,6 +398,10 @@ window.sn_topics = {
                 }
             },
 
+            onMove: function(e) {
+                // return e.related.className !== 'what' // event.related is the key
+            },
+
             onEnd: function (e) {
                 let snfwis = document.querySelectorAll('.snfwi');
                 if(snfwis){
@@ -407,7 +409,9 @@ window.sn_topics = {
                         snfwis[s].classList.remove('sn_moving_tiny_mces');
                     }
                 }
-                sn_topics.topicChanged();
+                sn_topics.saveTopic();
+
+                // sn_topics.saveTopic();
                 setTimeout(() => {
                     console.log('target is sorted...');
                 }, 1500);
@@ -418,7 +422,7 @@ window.sn_topics = {
         if(fieldSource){
 
             Sortable.create(fieldSource, {
-                draggable: ".snfw",
+                draggable: ".snfw", /* .snfw */
                 sort: false,
                 group: {
                     name: "fields",
@@ -427,19 +431,17 @@ window.sn_topics = {
                     ghostClass: 'dragging',
                     animation: 150,
                 },
-                onMove: function (e) {},
+                onMove: function(e) {
+                    return e.related.className !== 'mz-preview' // event.related is the key
+                },
+
                 onClone: function (e) {},
                 onEnd: function (e) {
-                    if((e.item.dataset.type === 'richtext') && e.to.classList.contains('metas')) {
-                        e.item.remove();
-                        return false;
-                    }
-                    else {
-                        sn_topics.initDroppedField(e.item);
-                        setTimeout(() => {
-                            console.log('target is sorted...');
-                        }, 500);
-                    }
+                    sn_topics.initDroppedField(e.item);
+                    setTimeout(() => {
+                        console.log('new field added...');
+                    }, 500);
+
 
                 },
             });
@@ -448,18 +450,88 @@ window.sn_topics = {
 
     },
 
-    'initDroppedField': (field) => {
-        let type = field.dataset.type;
-        let new_field_id = Math.random().toString(20).substring(2, 15);
-        // field.querySelector('.n').innerText = 'untitled-field';
-        field.querySelector('.snfwi').id = 'untitled-field-' + new_field_id;
-        if(type === 'richtext'){
-            field.querySelector('.editor.richtext').id = 't_' + document.body.dataset.topic_id + '_' + new_field_id;
+
+    'saveFieldOriginalValue': (e) => {
+        e.target.dataset.original_value = e.target.innerText;
+    },
+
+    'checkFieldNameDuplicates': (e) => {
+        let fieldNameCEs = document.querySelectorAll("#topicContent .sort.content .snfw .settings .n");
+        if(fieldNameCEs){
+            for (let i = 0; i < fieldNameCEs.length; i++) {
+                if(
+                    fieldNameCEs[i].closest(".snfw").id !== e.target.closest(".snfw").id &&
+                    fieldNameCEs[i].innerText === e.target.innerText
+                ){
+                    e.target.closest(".snfw").classList.add('duplicateFieldName');
+                    console.log('duplicate!: ', e.target.innerText);
+                    break;
+                    return true;
+                }
+                else {
+                    e.target.closest(".snfw").classList.remove('duplicateFieldName');
+                    console.log('sok!: ', e.target.innerText);
+                }
+            }
+
         }
+    },
+
+    'changeOrRevertFieldName': (e) => {
+        let field = e.target.closest('.snfw');
+        if(!field.classList.contains('duplicateFieldName')){
+            let newFieldName = e.target.innerText;
+            field.dataset.field = newFieldName;
+            field.id = 'snfw-' + newFieldName;
+            if(field.dataset.type === 'richtext'){
+                field.querySelector('.editor.richtext').id = 't_' + document.body.dataset.topic_id + '_' + newFieldName;
+            }
+            sn_topics.saveTopic();
+        }
+        else {
+            e.target.innerText = e.target.dataset.original_value;
+            e.target.removeAttribute('data-original_value');
+            e.target.closest(".snfw").classList.remove('duplicateFieldName');
+        }
+    },
+
+    'listenFieldNameChanges': (e) => {
+        let fieldNameCEs = document.querySelectorAll("#topicContent .sort.content .snfw .settings .n");
+        if(fieldNameCEs){
+            for (let i = 0; i < fieldNameCEs.length; i++) {
+
+                fieldNameCEs[i].removeEventListener('focus', sn_topics.saveFieldOriginalValue);
+                fieldNameCEs[i].addEventListener('focus', sn_topics.saveFieldOriginalValue, null);
+
+                fieldNameCEs[i].removeEventListener('keyup', sn_topics.checkFieldNameDuplicates);
+                fieldNameCEs[i].addEventListener('keyup', sn_topics.checkFieldNameDuplicates, null);
+
+                fieldNameCEs[i].removeEventListener('blur', sn_topics.changeOrRevertFieldName);
+                fieldNameCEs[i].addEventListener('blur', sn_topics.changeOrRevertFieldName, null);
+
+            }
+        }
+
+
+    },
+
+    'initDroppedField': (field) => {
+
+        let newFieldName = 'new-' + field.dataset.aft + '-field-' + (+new Date * Math.random()).toString(36).substring(0,6);
+        let nameCE = field.querySelector(".settings .n");
+        field.dataset.field = nameCE.innerText = nameCE.dataset.original_value = newFieldName;
+        field.id = 'snfw-' + newFieldName;
+        if(field.dataset.type === 'richtext'){
+            field.querySelector('.editor.richtext').id = 't_' + document.body.dataset.topic_id + '_' + newFieldName;
+        }
+        nameCE.focus();
+        window.getSelection().selectAllChildren(nameCE)
+
         sn_helpers.initContentEditables();
         sn_topics.listenDestroyContentOrMetaField();
         sn_media.initMediaManager();
-        sn_topics.topicChanged();
+        sn_topics.listenFieldNameChanges();
+        sn_topics.saveTopic();
 
     },
 
@@ -525,7 +597,7 @@ window.sn_topics = {
     },
 
     'listenTopicChanges': () => {
-        let updateInputs = document.querySelectorAll(".editor, .n, .aft, .sn_css, .sn_blade, .mfw input, .mfw textarea");
+        let updateInputs = document.querySelectorAll(".editor, .aft, .sn_css, .sn_blade, .mfw input, .mfw textarea");
         if(updateInputs){
             for (let i = 0; i < updateInputs.length; i++) {
                 updateInputs[i].removeEventListener('input', sn_topics.topicChanged);
@@ -690,7 +762,7 @@ window.sn_topics = {
     },
 
     "uploadFile": (file, i) => {
-        let url = sn_globals.cms_url + '/media/save';
+        let url = sn_globals.cms_url + '/media/upload';
         let xhr = new XMLHttpRequest();
         let formData = new FormData();
         xhr.open('post', url, true);
@@ -754,6 +826,7 @@ window.sn_topics = {
         sn_topics.listenDeleteTopic();
         sn_topics.listentGoToURL();
         sn_topics.listenUpdateTopicStatus();
+        sn_topics.listenFieldNameChanges();
 
         sn_topics.listenDestroyContentOrMetaField();
         sn_topics.listenValidateTopicURL();
@@ -762,9 +835,9 @@ window.sn_topics = {
         sn_topics.initFileDroppers();
         sn_topics.listenSetTextFieldTag();
 
-        if(sn_topics.topicContentAndMetaFieldSorts){
-            for (let t = 0; t < sn_topics.topicContentAndMetaFieldSorts.length; t++) {
-                sn_topics.initSortTopicContentOrMetaFields(sn_topics.topicContentAndMetaFieldSorts[t]);
+        if(sn_topics.topicContentFieldSorts){
+            for (let t = 0; t < sn_topics.topicContentFieldSorts.length; t++) {
+                sn_topics.initSortTopicContentFields(sn_topics.topicContentFieldSorts[t]);
             }
         }
 

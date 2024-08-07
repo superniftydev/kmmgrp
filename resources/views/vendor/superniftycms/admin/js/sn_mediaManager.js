@@ -1,5 +1,5 @@
 
-Dropzone.autoDiscover = false;
+// Dropzone.autoDiscover = false;
 
 
 /* upload a folder ----->
@@ -44,16 +44,18 @@ window.sn_media = {
     'userUploadedVideoW': document.querySelector('#userUploadedVideoW') ? document.querySelector('#userUploadedVideoW') : null,
     'userUploadedVideo': document.querySelector('#userUploadedVideoW video') ? document.querySelector('#userUploadedVideoW video') : null,
 
-    'setVimeoPosterURL': async (vendor_media_id, target_img) =>  {
+    'setVimeoPosterURL': async (dataObject) =>  {
         try{
-            await fetch('https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/' + vendor_media_id)
+            await fetch('https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/' + dataObject.vendor_media_id)
                 .then((response) => {
                     if (!response.ok) { /* throw new Error('vimeo video poster not found'); */ }
                     return response.json();
                 })
                 .then((data) => {
-                    target_img.src = data.thumbnail_url;
-                    return true;
+
+                    document.querySelector("[data-media_id='"  +  dataObject.id + "'] img").src = data.thumbnail_url;
+                    console.log('!!! --> set vimeo poster image:', data);
+
                 })
                 .catch((error) => {
                     console.log('!!! --> setVimeoPosterURL error:', error);
@@ -66,23 +68,42 @@ window.sn_media = {
         }
     },
 
-    'setYouTubePosterURL': (vendor_media_id, target_img) => {
-        target_img.src = 'https://img.youtube.com/vi/' + vendor_media_id + '/0.jpg';
-        return true;
+    'getYouTubePosterURL': (vendor_media_id, target_img) => {
+        return 'https://img.youtube.com/vi/' + vendor_media_id + '/0.jpg';
     },
 
-    'setOutsideVendorVideoURL': () => {
+
+
+    'setOutsideVendorVideoURL': (e) => {
+        console.log('-------> running setOutsideVendorVideoURL()...');
+        let vendor = document.body.dataset.media_modal_status;
         let url = '';
-        if(sn_media.activeMedia.type === 'youtube'){ url = 'https://www.youtube.com/embed/' + sn_media.activeMedia.vendor_media_id + '?autoplay=1&loop=0&byline=1&title=1'; }
-        else if(sn_media.activeMedia.type === 'vimeo'){ url = 'https://player.vimeo.com/video/' + sn_media.activeMedia.vendor_media_id + '?autoplay=1&loop=0&byline=1&title=1'; }
+        if(vendor === 'youtube'){
+            url = 'https://www.youtube.com/embed/' + e.target.innerText + '?autoplay=1&loop=0&byline=1&title=1';
+        }
+        else if(vendor === 'vimeo'){
+            url = 'https://player.vimeo.com/video/' + e.target.innerText + '?autoplay=1&loop=0&byline=1&title=1';
+        }
         sn_media.outsideVendorVideoViewer.querySelector('iframe').src = url;
+        sn_media.saveMediaModalData();
     },
 
-    'saveMedia': () => {
-        sn_media.activeMedia.topic_id = sn_topics.activeTopic.id;
-        sn_media.activeMedia.parent_slug = sn_topics.activeTopic.parent_slug;
-        sn_helpers.postData(sn_globals.cms_url + '/media/save', 'post', sn_media.activeMedia)
+
+
+    'listenSetOutVendorVideoURL': () => {
+        let outsideVendorVideoIDField = document.getElementById('outsideVendorVideoID');
+        outsideVendorVideoIDField.addEventListener('blur', sn_media.setOutsideVendorVideoURL);
+    },
+
+    'saveMediaMetas': () => {
+
+        console.log('sn_media.activeMedia: ', sn_media.activeMedia);
+
+        /*
+        sn_helpers.postData(sn_globals.cms_url + '/media/deprecated...', 'post', sn_media.activeMedia)
             .then(data => {
+
+
                 document.body.classList.add('updated');
 
                 // update all preview elements
@@ -113,6 +134,10 @@ window.sn_media = {
 
             })
             .catch((error) => { console.error('Error:', error); });
+            */
+
+
+
 
     },
 
@@ -120,244 +145,340 @@ window.sn_media = {
         let mediaPreview = document.querySelector('#sn_mediaDZTemplate .dz-preview').cloneNode(true);
         if(sn_media.mediaThumbs.includes(mockFile.type)){ mediaPreview.querySelector('img').src = sn_media.getMediaPreviewURL(mockFile); }
         mediaPreview = sn_media.populateMediaPreviewElement(mediaPreview, mockFile);
-        sn_media.dzs[sn_media.activeMedia.dzid].append(mediaPreview);
-        sn_media.dzs[sn_media.activeMedia.dzid].classList.remove('empty');
+        sn_media.dzs[sn_media.activeMedia.zid].append(mediaPreview);
+        sn_media.dzs[sn_media.activeMedia.zid].classList.remove('empty');
     },
 
     'createMediaPreviewElementDZ': (dz, file) => {
-        let mf = { name: file.title, size: file.size };
-        dz.options.addedfile.call(dz, mf);
-        dz.files.push(mf);
-        console.log('file.type: ', file.type);
-        console.log('sn_media.mediaThumbs', sn_media.mediaThumbs);
 
-        if(sn_media.mediaThumbs.includes(file.type) || file.type === 'svg'){
-            dz.options.thumbnail.call(dz, mf, sn_media.getMediaPreviewURL(file));
+
+        console.log('[ dz ]------> ', dz);
+        console.log('[ file ]------> ', file);
+
+
+        let metasInput = file.metas;
+        let metasObject = false;
+        if(metasInput.constructor === String) { metasObject = JSON.parse(metasInput); }
+        else if(metasInput.constructor === Object) { metasObject = metasInput; }
+        console.log('[ metasObject ]------> ', metasObject);
+
+        if(metasObject){
+            let mf = { name: metasObject.title, size: metasObject.original_file_size };
+            console.log('[ mf ]------> ', mf);
+            dz.options.addedfile.call(dz, mf);
+            dz.files.push(mf);
+            console.log('file.type: ', file.type);
+            console.log('sn_media.mediaThumbs', sn_media.mediaThumbs);
+
+            if(sn_media.mediaThumbs.includes(file.type) || file.type === 'svg'){
+
+                console.log('[ dz ]------> ', dz);
+                console.log('[ mf ]------> ', mf);
+                console.log('[ sn_media.getMediaPreviewURL(file) ]------> ', sn_media.getMediaPreviewURL(file));
+
+                // dz.options.thumbnail.call(dz, mf, sn_media.getMediaPreviewURL(file));
+            }
+            mf.previewElement = sn_media.populateMediaPreviewElement(mf.previewElement, file);
+
         }
-        else if(sn_media.outsideVendorVideos.includes(file.type)){
-        }
-        mf.previewElement = sn_media.populateMediaPreviewElement(mf.previewElement, file);
     },
 
-    'setActiveMediaData': (target) => {
+    'setActiveMediaData': (dataStore) => {
+        console.log('setActiveMediaData target ----> ', dataStore);
+        let metasInput = dataStore.closest('[data-metas]') ? dataStore.closest('[data-metas]').dataset.metas : '';
 
-        console.log('setActiveMediaData target ----> ', target);
+        /* clean up legacy json data */
+        console.log('----------------> metasInput before clean: ', metasInput);
+        if(metasInput.charAt(0) === '"'){ metasInput = metasInput.slice(1); }
+        if(metasInput.substring(metasInput.length - 1) === '"'){ metasInput = metasInput.substring(0, metasInput.length - 1); }
+        metasInput = metasInput.replaceAll('"}', '');
+        metasInput = metasInput.replaceAll('{"', '');
+        metasInput = metasInput.replaceAll('","', '|');
+        metasInput = metasInput.replaceAll('":"', ':');
+        console.log('----------------> metasInput after clean: ', metasInput);
+        let metasObject= sncms_dz_func.pipedStringToObject(metasInput);
 
-        let topic_id = document.body.dataset.topic_id;
-        let topic_field= target.closest('.snfw') ? target.closest('.snfw').dataset.field : document.body.dataset.topic_field;
-        let media_id = null;
-
-        /* youtube or vimeo */
-        if(target.hasAttribute('data-accepted') && (target.dataset.accepted === 'youtube') || target.dataset.accepted === 'vimeo'){
-            media_id = 'new'
-        }
-
-        /* core */
         sn_media.activeMedia = {
-            'topic_id': topic_id,
-            'topic_field': topic_field,
-            'media_id': media_id ? media_id : target.dataset.media_id,
-            'vendor_media_id': target.dataset.vendor_media_id,
-            'original': target.dataset.original,
-            'type': target.dataset.type,
-            'aft': target.closest('.snfw') ?  target.closest('.snfw').dataset.aft : null,
-            'dzid': target.closest('.snfw') ? target.closest('.snfw').id : 'global'
+            'topic_id': document.body.dataset.topic_id,
+            'topic_field': dataStore.closest('.snfw') ? dataStore.closest('.snfw').dataset.field : document.body.dataset.topic_field,
+            'media_id': dataStore.closest('[data-media_id]') ? dataStore.closest('[data-media_id]').dataset.media_id : null,
+            'title': dataStore.closest('[data-title]') ? dataStore.closest('[data-title]').dataset.title : 'Untitled Media',
+            'vendor_media_id': dataStore.closest('[data-vendor_media_id]') ? dataStore.closest('[data-vendor_media_id]').dataset.vendor_media_id : null,
+            'url_original': dataStore.closest('[data-url_original]') ? dataStore.closest('[data-url_original]').dataset.url_original : null,
+            'url_thumbnail': dataStore.closest('[data-url_thumbnail]') ? dataStore.closest('[data-url_thumbnail]').dataset.url_thumbnail : null,
+            'type': dataStore.closest('[data-type]') ? dataStore.closest('[data-type]').dataset.type : null,
+            'ext': dataStore.closest('[data-ext]') ? dataStore.closest('[data-ext]').dataset.ext : '',
+            'metas': sncms_dz_func.pipedStringToObject(metasInput),
+            'size': sn_helpers.fileSize(metasObject.original_file_size),
+            'aft': dataStore.closest('[data-aft]') ? dataStore.closest('[data-aft]').dataset.aft : null,
+            'zid': dataStore.closest('.snfw') ? dataStore.closest('.snfw').id : 'global'
         };
-
-        /* metas */
-        if(!Object.is(target.dataset.metas, null) && !Object.is(target.dataset.metas, undefined)) {
-            sn_media.activeMedia['metas'] = sn_media.metaStringToObject(target.dataset.metas);
-        }
         console.log('setActiveMediaData result (sn_media.activeMedia): ', sn_media.activeMedia);
+    },
+
+    'saveMediaModalData': () => {
+
+        console.log('-----> running saveMediaModalData()....');
+
+        let new_vendor_video = false;
+        let type= document.body.dataset.media_modal_status;
+        let vendor_media_id_field = document.getElementById('outsideVendorVideoID');
+        let vendor_media_id = vendor_media_id_field ? vendor_media_id_field.innerText.trim() : '';
+
+        console.log('type: ', type);
+        console.log('vendor_media_id_field: ', vendor_media_id_field);
+        console.log('vendor_media_id: ', vendor_media_id);
+
+        if(
+            ((type === 'youtube' || type === 'vimeo') && vendor_media_id.length > 3) ||
+            (type !== 'youtube' && type !== 'vimeo')
+        ){
+
+            let metas = {};
+            let metaFields = document.querySelectorAll('.metas .snfw.meta');
+            console.log('metaFields: ', metaFields);
+            if(metaFields){
+                for (let m= 0; m < metaFields.length; m++) {
+                    let ce = metaFields[m].querySelector('[contenteditable]');
+                    metas[ce.dataset.meta.trim()] = ce.innerText.trim()
+                }
+            }
+
+            let data = {
+                'media_id': document.body.dataset.modal_media_id,
+                'metas': metas,
+                'topic_id': document.body.dataset.topic_id,
+                'topic_field': document.body.dataset.topic_field
+            }
+
+            if(type === 'youtube' || type === 'vimeo'){
+                data['type'] = type;
+                data['vendor_media_id'] = vendor_media_id;
+            }
+
+            if(data.media_id === 'new') { new_vendor_video = true; }
+
+            sn_helpers.postData(sn_globals.cms_url + '/media/set', 'post', data)
+                .then(function (data) {
+                    console.log('---------> saveMediaModalData response: ', data.media);
+                    if(new_vendor_video){
+                        document.body.dataset.modal_media_id = data.media.id;
+                        let mediaPreview = sncms_dz_func.generateMediaPreview(data.media, document.body.dataset.media_modal_status);
+                        document.querySelector(".snfw[data-field='" + document.body.dataset.topic_field + "'] .mediazone").appendChild(mediaPreview);
+                        sn_media.toggleMediaModalListener();
+                        sn_topics.saveTopic();
+                    }
+                    setTimeout(() => {
+                        console.log('two seconds later: ', data.media);
+                    }, 2000);
+                })
+                .catch((error) => { console.error('!!! --> saveMediaModalData error:', error); });
+
+        }
+
+
     },
 
     'toggleMediaModal': (e) => {
 
-        if(e.target.closest('.dz-preview')) { sn_media.setActiveMediaData(e.target.closest('.dz-preview')); }
-
-        if(document.body.hasAttribute('data-media-modal-close-reload')){
-            window.location.replace(document.body.getAttribute('data-media-modal-close-reload'));
-        }
-
-        // e.preventDefault();
-        let target = e;
-        if(!e.isConnected){ target = e.target; }
-
-        // sn_media.updateTargetMediaMeta(target);
+        console.log('toggleMediaModal was requested...', e.target);
 
         /* close */
         if(document.body.hasAttribute('data-media_modal_status')){
 
-            let target_dz_preview_element = document.querySelector("[data-media_id='" + sn_media.activeMedia.media_id + "']");
-            target_dz_preview_element.dataset.metas = sn_media.metaObjectToString(sn_media.activeMedia.metas);
-
-            if(document.body.dataset.media_modal_status === 'ovv' && sn_media.outsideVendorVideoID.innerText.length > 3){
-                console.log('save one...');
-                sn_media.saveMedia();
-            }
-            else if(document.body.dataset.media_modal_status !== 'ovv') {
-                sn_media.saveMedia();
-                console.log('save two...');
-            }
-
-
-            // sn_media.saveMedia();
-            document.body.classList.add('updated');
-            setTimeout(() => {
-                document.body.classList.remove('updated');
-            }, 2000);
+            sn_media.saveMediaModalData();
 
             sn_media.userUploadedVideo.pause();
             sn_media.userUploadedVideoViewer.removeAttribute('data_media_id');
             // sn_media.userUploadedVideoW.querySelector("img").removeAttribute('src');
             sn_media.userUploadedVideo.removeAttribute('poster');
-            sn_media.userUploadedVideo.querySelector("source[type='video/mp4']").removeAttribute('src');
-            sn_media.userUploadedVideo.querySelector("source[type='video/webm']").removeAttribute('src');
-            sn_media.userUploadedVideo.querySelector("source[type='video/ogg']").removeAttribute('src');
+            let videoSources= sn_media.userUploadedVideo.querySelectorAll("source");
+            if(videoSources){
+                for (let v = 0; v < videoSources.length; v++) {
+                    videoSources[v].removeAttribute('src');
+                }
+            }
 
+
+            document.body.removeAttribute('data-modal_media_id');
             document.body.removeAttribute('data-media_modal_vendor_media_id');
             document.body.removeAttribute('data-media_modal_media_type');
             document.body.removeAttribute('data-media_modal_status');
+            document.body.removeAttribute('data-topic_field');
+
+
 
             sn_media.snDocumentImageViewer.removeAttribute('src');
             if(sn_media.snVideoViewer.querySelector('video')) { sn_media.snVideoViewer.querySelector('video').remove(); }
             sn_media.outsideVendorVideoViewer.querySelector('iframe').removeAttribute('src');
             sn_media.activeMedia = false;
-
-            /* convert below to a for each on all meta */
-
             if(sn_media.mediaMetas){
                 for (let m = 0; m < sn_media.mediaMetas.length; m++) {
                     sn_media.mediaMetas[m].querySelector('[contenteditable]').innerText = '';
                 }
             }
-
             sn_media.mediaType.innerText = '';
             sn_media.mediaSize.innerText = '';
             sn_media.outsideVendorVideoID.innerText = '';
             sn_media.outsideVendorVideoID.dataset.vendor = '';
             sn_media.outsideVendorVideoID.dataset.cv = '';
-
-
-            // userUploadedVideo stuff...
-
         }
 
         /* open */
         else {
 
-            /* click from .dz-preview */
-            if(target.closest('.dz-preview')){
-                target = target.closest('.dz-preview');
-            }
-
-            /* click from #sn_contextMenu ul#sn_CMDZMedia li.edit-details */
-            else if(target.closest("ul#sn_CMDZMedia")){
-                target = document.querySelector(".dz-preview[data-media_id='" + target.closest('ul').dataset.media_id + "']");
-            }
-
-            /* click from add vimeo or youtube button */
-            else if(target.classList.contains('snfw')) {
-                target.dataset.title = e.target.dataset.type.charAt(0).toUpperCase() + e.target.dataset.type.slice(1) + ' Video';
-                target.dataset.description = '';
-                target.dataset.original = '';
-                target.dataset.type = e.target.dataset.type;
-                target.dataset.vendor_media_id = 'new';
-                target.dataset.size = '';
-                target.dataset.tags = 'video, ' +  e.target.dataset.type;
-                target.dataset.dzid = target.closest('.snfw') ? target.closest('.snfw').id : 'global'; /* global uploads have since been disabled */
-            }
-
-            if(!target.classList.contains('snfw') && !Object.is(sn_media.activeMedia['metas'], undefined) && !Object.is(sn_media.activeMedia['metas'].original_file_size, undefined)) {
-                target.dataset.size = sn_helpers.fileSize(sn_media.activeMedia['metas'].original_file_size);
-            }
-
-            let dzid = target.closest('.snfw') ? target.closest('.snfw').id : 'global';
-
-            /* set active media data */
-            sn_media.setActiveMediaData(target);
-
-            /* set ui values */
-            sn_media.dzWs[dzid].dataset.type = sn_media.activeMedia.type;
-            sn_media.mediaSize.innerText = target.dataset.size;
-            sn_media.mediaType.innerText = target.dataset.type;
-
-            /* set the metas */
-            if(sn_media.mediaMetas){
-
-                /* apply the newly created object values to their associated contenteditables */
-                for (let m = 0; m < sn_media.mediaMetas.length; m++) {
-                    let ce = sn_media.mediaMetas[m].querySelector('[contenteditable]');
-
-                    if(
-                        !Object.is(ce.dataset.meta, undefined) &&
-                        !Object.is(sn_media.activeMedia['metas'], undefined) &&
-                        sn_media.activeMedia['metas'][ce.dataset.meta.trim()] !== undefined &&
-                        sn_media.activeMedia['metas'][ce.dataset.meta.trim()] !== 'undefined' &&
-                        sn_media.activeMedia['metas'][ce.dataset.meta.trim()] !== null &&
-                        sn_media.activeMedia['metas'][ce.dataset.meta.trim()] !== 'null'
-                    ) {
-                        ce.innerText = sn_media.activeMedia['metas'][ce.dataset.meta.trim()];
-                    }
-                }
-            }
-
-            /* now set the ui to be displayed based on the file type */
-
-            /* image stored in the local file, so  */
-            if(target.classList.contains('tsniam')){ // this class never gets set...
-                document.body.setAttribute('data-media_modal_status', 'sni');
-                sn_media.snDocumentImageViewer.src = sn_media.activeMedia.original; // and this is undefined...
-            }
-
-            /* user uploaded video */
-            else if(target.classList.contains('tuuvam')){
-                document.body.setAttribute('data-media_modal_status', 'uuv');
-                sn_media.userUploadedVideoViewer.dataset.media_id = sn_media.activeMedia.media_id;
-                if(sn_media.activeMedia.media_id !== 'new'){
-                    sn_media.setUserUploadedVideoViewerURLS(target);
-                }
-            }
-
-            /* outside vendor video */
-            else if(sn_media.activeMedia.aft === 'youtube' || sn_media.activeMedia.aft === 'vimeo'){
-                document.body.setAttribute('data-media_modal_media_type', sn_media.activeMedia.type);
-                document.body.setAttribute('data-media_modal_vendor_media_id', sn_media.activeMedia.vendor_media_id);
-                document.body.setAttribute('data-media_modal_status', 'ovv');
-                sn_media.outsideVendorVideoID.dataset.vendor = sn_media.activeMedia.type;
-                sn_media.outsideVendorVideoID.dataset.cv = sn_media.activeMedia.vendor_media_id;
-                sn_media.dzWs[dzid].dataset.vendor_media_id = sn_media.activeMedia.vendor_media_id;
-                // sn_media.outsideVendorVideoViewer.dataset.vendor_media_id = sn_media.activeMedia.vendor_media_id;
-                if(sn_media.activeMedia.media_id !== 'new'){
-                    sn_media.setOutsideVendorVideoURL(target);
-                    sn_media.outsideVendorVideoID.innerText = sn_media.activeMedia.vendor_media_id;
-                }
-            }
-
-            /* documents of all types */
-            else if(
-                target.dataset.type ==='doc' ||
-                target.dataset.type ==='docx' ||
-                target.dataset.type ==='xls' ||
-                target.dataset.type ==='xlsx' ||
-                target.dataset.type ==='ppt' ||
-                target.dataset.type ==='pptx' ||
-                target.dataset.type ==='pdf' ||
-                target.dataset.type ==='svg' ||
-                target.dataset.type ==='txt' ||
-                target.dataset.type ==='json'
+            /* adding a NEW outside vendor video */
+            if(
+                (e.target.closest('.snfw').dataset.aft === 'youtube' || e.target.closest('.snfw').dataset.aft === 'vimeo') &&
+                !e.target.closest('.mz-preview')
             ){
-                document.body.setAttribute('data-media_modal_status', 'document');
-                sn_media.documentSummary.dataset.type = target.dataset.type;
+
+                let data = {}
+                data['media'] = {
+                    'created_at': null,
+                    'created_by': null,
+                    'id': 'new',
+                    'last_updated_by': null,
+                    'metas': {'tags': null, 'notes': null, 'title': 'New Video', description: null, original_file_size: null },
+                    'type': e.target.closest('.snfw').dataset.aft,
+                    'updated_at': null,
+                    'vendor_media_id': 'Enter Video ID Here...'
+                };
+                sn_media.populateMediaModal(e.target, data);
+            }
+
+            /* everything else */
+            else {
+
+                let media_id = e.target.closest('.mz-preview').dataset.media_id;
+                sn_helpers.postData(sn_globals.cms_url + '/media/get', 'post', {
+                        'media_id': media_id,
+                    })
+                    .then(function (data) {
+                        sn_media.populateMediaModal(e.target, data);
+                        setTimeout(() => {
+                            console.log('again with the get media data: ', data.media);
+                        }, 2000);
+                    })
+                    .catch((error) => { console.error('!!! --> toggleMediaModal error:', error); });
+
             }
 
         }
     },
 
+
+    'populateMediaModal': (target, data) => {
+
+        console.log('populateMediaModal media.data: ', data.media);
+        let metasObject;
+
+        /* attempt to clean corrupted json data */
+        let metasInput = data.media.metas ? data.media.metas : {};
+        if(metasInput.constructor !== Object) {
+            console.log('----------------> metasInput before clean: ', metasInput);
+            if(metasInput.charAt(0) === '"'){ metasInput = metasInput.slice(1); }
+            if(metasInput.substring(metasInput.length - 1) === '"'){ metasInput = metasInput.substring(0, metasInput.length - 1); }
+            metasInput = metasInput.replaceAll('"}', '');
+            metasInput = metasInput.replaceAll('{"', '');
+            metasInput = metasInput.replaceAll('","', '|');
+            metasInput = metasInput.replaceAll('":"', ':');
+            console.log('----------------> metasInput after clean: ', metasInput);
+            metasObject = sncms_dz_func.pipedStringToObject(metasInput);
+        }
+        else { metasObject = data.media.metas; }
+
+        /* set file size */
+        if(typeof metasObject['original_file_size'] !== 'undefined'){
+            sn_media.mediaSize.innerText = sn_helpers.fileSize(metasObject['original_file_size']);
+        }
+
+        /* set file title */
+        if(typeof metasObject['title'] !== 'undefined'){
+            sn_media.mediaType.innerText = metasObject['title'];
+        }
+
+        /* set the metas */
+        let metaFields = document.querySelectorAll('.metas .snfw.meta');
+        console.log('metaFields: ', metaFields);
+        if(metaFields){
+            for (let m= 0; m < metaFields.length; m++) {
+                let ce = metaFields[m].querySelector('[contenteditable]');
+                console.log('ce.dataset.meta.trim()', ce.dataset.meta.trim());
+
+                if(
+                    !Object.is(ce.dataset.meta, undefined) &&
+                    !Object.is(metasObject, undefined) &&
+                    metasObject[ce.dataset.meta.trim()] !== undefined &&
+                    metasObject[ce.dataset.meta.trim()] !== 'undefined' &&
+                    metasObject[ce.dataset.meta.trim()] !== null &&
+                    metasObject[ce.dataset.meta.trim()] !== 'null'
+                ) {
+                    ce.innerText = metasObject[ce.dataset.meta.trim()];
+                }
+            }
+        }
+
+        let aft =  target.closest('.snfw').dataset.aft;
+
+        /* now set the ui to be displayed based on the file type */
+        document.body.dataset.modal_media_id = data.media.id; /* redundant - clean up */
+        document.body.dataset.topic_field = target.closest('.snfw').dataset.field;
+        document.body.setAttribute('data-media_modal_status', aft);
+        document.body.setAttribute('data-media_modal_media_id', data.media.id); /* redundant - clean up */
+
+        /* images  */
+        if(aft === 'images'){
+            sn_media.snDocumentImageViewer.src =  data.media.urls.original;
+        }
+
+        /* videos */
+        else if(aft === 'videos'){
+            sn_media.userUploadedVideoViewer.dataset.media_id = data.media.id;
+            if(data.media.id !== 'new'){
+                sn_media.setUserUploadedVideoViewerURLS('NOT_IMPLEMENTED');
+            }
+        }
+
+        /* outside vendor video */
+        else if(aft === 'youtube' || aft === 'vimeo'){
+            console.log('hello!!!!!!!!! - youtube   tryin...');
+
+            document.body.setAttribute('data-media_modal_media_type', data.media.type);
+            document.body.setAttribute('data-media_modal_vendor_media_id', data.media.vendor_media_id);
+            sn_media.outsideVendorVideoID.dataset.vendor = data.media.type;
+            sn_media.outsideVendorVideoID.dataset.cv = data.media.vendor_media_id;
+            if(data.media.id !== 'new'){
+                sn_media.outsideVendorVideoID.innerText = data.media.vendor_media_id;
+                let url = '';
+                if(data.media.type === 'youtube'){
+                    console.log('hello!!!!!!!!! - youtube   ');
+                    url = 'https://www.youtube.com/embed/' + data.media.vendor_media_id + '?autoplay=1&loop=0&byline=1&title=1';
+                }
+
+                else if (data.media.type === 'vimeo'){
+                    url = 'https://player.vimeo.com/video/' + data.media.vendor_media_id + '?autoplay=1&loop=0&byline=1&title=1';
+                }
+                sn_media.outsideVendorVideoViewer.querySelector('iframe').src = url;
+
+            }
+        }
+
+        /* documents of all types */
+        else if(aft === 'documents'){
+            sn_media.documentSummary.dataset.type = data.media.type;
+        }
+
+    },
+
+
+
+
     'toggleMediaModalListener': () => {
-        let modalTriggers = document.querySelectorAll(".dz-preview .dz-image, .snfw[data-aft='vimeo'], .snfw[data-aft='youtube'], .closeModal, ul#sn_CMDZMedia li.edit-details");
+        let modalTriggers = document.querySelectorAll(".mz-preview, .closeModal");
         if(modalTriggers){
             for (let m = 0; m < modalTriggers.length; m++) {
+                console.log('======== ==== ===== === ===> ', modalTriggers[m]);
                 modalTriggers[m].removeEventListener('click', sn_media.toggleMediaModal);
                 modalTriggers[m].addEventListener('click', sn_media.toggleMediaModal, null);
             }
@@ -369,10 +490,10 @@ window.sn_media = {
     'toggleSelectedMedia': (targetDZPreview) => {
 
         if(document.body.id !== 'superniftycms-media-index'){
-            let dzid = targetDZPreview.closest('.snfw') ? targetDZPreview.closest('.snfw').id : 'global';
+            let zid = targetDZPreview.closest('.snfw') ? targetDZPreview.closest('.snfw').id : 'global';
             targetDZPreview.remove();
 
-            sn_media.saveMediaSortData(dzid);
+            sncms_dz_func.saveSortedMediaZone(zid);
         }
 
         else if(document.body.id === 'superniftycms-media-index'){
@@ -407,7 +528,7 @@ window.sn_media = {
     },
 
     'dzOptions': {
-        url: sn_globals.cms_url + '/media/save',
+        url: sn_globals.cms_url + '/media/deprecated...',
         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
         maxFilesize: maxUploadFilesize,
         acceptedFiles: null,
@@ -484,18 +605,18 @@ window.sn_media = {
 
         init: function() {
             let dz = this;
-            this.element.querySelector('.dz-default.dz-message').remove();
+            // this.element.querySelector('.dz-default.dz-message').remove();
             let snfw = this.element.closest('.snfw');
-            let dzid = snfw ? snfw.id : 'global';
+            let zid = snfw ? snfw.id : 'global';
 
-            this.options.clickable = snfw.dataset.aft !== 'youtube' && snfw.dataset.aft !== 'vimeo';
             console.log('snfw.dataset.aft: ', snfw.dataset.aft);
+            console.log('sn_media.sn_existingMedia[zid]: ', sn_media.sn_existingMedia[zid]);
 
 
             /* load existing media */
-            if(!Object.is(sn_media.sn_existingMedia[dzid], null)) {
+            if(!Object.is(sn_media.sn_existingMedia[zid], null)) {
                 try {
-                    for (const existingSourceMedia of sn_media.sn_existingMedia[dzid]) {
+                    for (const existingSourceMedia of sn_media.sn_existingMedia[zid]) {
                         sn_media.createMediaPreviewElementDZ(dz, existingSourceMedia);
                     }
                     this.element.classList.remove('init');
@@ -582,9 +703,9 @@ window.sn_media = {
 
                     setTimeout(() => {
                         document.body.classList.remove('updated');
-                        console.log('dzid', dzid);
-                        if(dzid !== 'global'){
-                            sn_media.saveMediaSortData(dzid);
+                        console.log('zid', zid);
+                        if(zid !== 'global'){
+                            sncms_dz_func.saveSortedMediaZone(zid);
                         }
                     }, 2000);
                 }
@@ -600,9 +721,9 @@ window.sn_media = {
                     sn_helpers.postData(sn_globals.cms_url + '/media/destroy/' + file.previewElement.dataset.media_id, 'post', data)
                         .then(data => {
                             console.log('!!! --> removedfile: ', data);
-                            console.log('dzid', dzid);
-                            if(dzid !== 'global'){
-                                sn_media.saveMediaSortData(dzid);
+                            console.log('zid', zid);
+                            if(zid !== 'global'){
+                                sn_media.saveMediaSortData(zid);
                             }
                         })
                         .catch((error) => { console.error('!!! -- removedfile error:', error); });
@@ -716,50 +837,18 @@ window.sn_media = {
 
 
         let target_preview_element = document.querySelector(".dz-preview[data-media_id='" + sn_helpers.contextMenu.dataset.media_id + "']");
-        let dzid = target_preview_element.closest('.snfw') ? target_preview_element.closest('.snfw').id : 'global';
+        let zid = target_preview_element.closest('.snfw') ? target_preview_element.closest('.snfw').id : 'global';
         target_preview_element.remove();
 
-        console.log('dzid', dzid);
-        if(dzid !== 'global'){
-            sn_media.saveMediaSortData(dzid);
+        console.log('zid', zid);
+        if(zid !== 'global'){
+            sncms_dz_func.saveSortedMediaZone(zid);
         }
 
-        sn_media.mediaWFileCheck(dzid);
+        sn_media.mediaWFileCheck(zid);
         console.log('!!! --> sn_helpers.mediaWFileCheck @ sn_helpers.deleteMedia');
     },
 
-    'saveMediaSortData': (dzid) => {
-
-        console.log('sn_media.dzs: ', sn_media.dzs);
-        console.log('dzid: ', dzid);
-        if(sn_media.dzs[dzid]){
-            console.log('zlorp');
-            let mediaSortOrder= [];
-            let media = sn_media.dzs[dzid].querySelectorAll(".dz-preview");
-            if(media){
-                for (let a = 0; a < media.length; a++) {
-                    mediaSortOrder.push(media[a].dataset.media_id);
-                }
-                sn_media.dzs[dzid].classList.remove('empty');
-            }
-            else { sn_media.dzs[dzid].classList.add('empty'); }
-
-            let mediaSortData = {
-                'topic_id': document.body.dataset.topic_id,
-                'topic_field': sn_media.dzs[dzid].closest('.snfw').dataset.field,
-                'media_sort_order': mediaSortOrder,
-            };
-            console.log('mediaSortData: ', mediaSortData);
-            sn_helpers.postData(sn_globals.cms_url + '/media/sort', 'post', mediaSortData)
-                .then(data => {
-                    document.body.classList.add('updated');
-                    setTimeout(() => {
-                        document.body.classList.remove('updated');
-                    }, 2000);
-                })
-                .catch((error) => { console.error('!!! --> saveMediaSortData error:', error); });
-        }
-    },
 
     'updateTargetMediaMeta' : (target) => {
         try {
@@ -795,7 +884,9 @@ window.sn_media = {
     'metaObjectToString' : (metaObject) => {
         try {
             let metaString = '';
-            for (const [k, v] of Object.entries(metaObject)) {
+
+            console.log('metaObject: ', JSON.parse(metaObject));
+            for (const [k, v] of Object.entries(JSON.parse(metaObject))) {
                 metaString += k + '|' + v + ',';
             }
             return metaString.substring(0, metaString.length - 1);
@@ -803,41 +894,77 @@ window.sn_media = {
         }
     },
 
-    'mediaTitleSizeFromMeta' : (metaObject) => {
+    'mediaTitleSizeFromMeta' : (input) => {
         try {
+            let object = null;
+            if(input.constructor === String) { object = JSON.parse(input); }
+            else if(input.constructor === Object) { object = input; }
+            console.log('object for size: ', object);
             let title = '';
-            for (const [k, v] of Object.entries(metaObject)) {
+            for (const [k, v] of Object.entries(JSON.parse(object))) {
                 if(k === 'title'){ title = v; }
                 if(k === 'original_file_size'){ title = title + ' | ' + sn_helpers.fileSize(v); }
             }
+            console.log('result for title_size: ', title);
+
             return title;
+        } catch (error) {
+        }
+    },
+
+    'mediaSizeFromMeta' : (input) => {
+        try {
+
+            let object = null;
+            if(input.constructor === String) { object = JSON.parse(input); }
+            else if(input.constructor === Object) { object = input; }
+            console.log('object for size: ', object);
+            let size = '';
+            for (const [k, v] of Object.entries(JSON.parse(object))) {
+                if(k === 'original_file_size'){ size = sn_helpers.fileSize(v); }
+            }
+            console.log('result for size: ', size);
+            return size;
         } catch (error) {
         }
     },
 
     'populateMediaPreviewElement': (element, file) => {
 
-        /* baseline */
+        /*
+
+        // baseline
         element.dataset.media_id = file.media_id;
         element.dataset.type = file.type;
 
-        /* store meta data as string in .dz-preview data-metas */
-        if(!Object.is(file.metas, null)) {
-            element.dataset.metas = sn_media.metaObjectToString(file.metas);
-            element.dataset.title_size = sn_media.mediaTitleSizeFromMeta(file.metas);
+
+        let metasString = '';
+        let metasObject = false;
+        if(file.metas) {
+            console.log('1. file.metas is set...');
+            if(file.metas.constructor === String) { metasObject = JSON.parse(file.metas); }
+            else if(file.metas.constructor === Object) { metasObject = file.metas; }
+            console.log('-----------> metasObject: ', metasObject);
+            if(metasObject.constructor === Object){
+                for (const [k, v] of Object.entries(metasObject)) {
+                    metasString += k + ':' + v + '|';
+                }
+                return metasString.substring(0, metasString.length - 1);
+            }
         }
+        element.dataset.metas = metasString;
 
         element.querySelector('[data-dz-size]').innerHTML = sn_helpers.fileSize(file.size);
         element.querySelector(".dz-size").dataset.type = file.type;
         element.classList.add('dz-complete');
-        /* element.classList.add('dz-success'); */
-        /* element.querySelector('.dz-created_at').innerText = file.created_at; */
-        /* element.querySelector('.dz-created_by').innerText = img.created_by; */
+        // element.classList.add('dz-success');
+        // element.querySelector('.dz-created_at').innerText = file.created_at;
+        // element.querySelector('.dz-created_by').innerText = img.created_by;
 
-        /* if viewing global media, is this specific media in use by the current topic_id? */
+        // if viewing global media, is this specific media in use by the current topic_id?
         if(sn_media.sn_selectedMediaIDs && sn_media.sn_selectedMediaIDs.includes(file.media_id)){ element.classList.add('selected'); }
 
-        /* outside vendor videos (youtube|vimeo) */
+        // outside vendor videos (youtube|vimeo)
         if(sn_media.outsideVendorVideos.includes(file.type)){
             element.classList.add('tovvam'); // toggle outside vendor video media modal
             element.dataset.vendor_media_id = file.vendor_media_id;
@@ -845,25 +972,36 @@ window.sn_media = {
             else if(file.type === 'youtube') { sn_media.setYouTubePosterURL(file.vendor_media_id, element.querySelector('img')); }
         }
 
-        /* user uploaded videos */
+        // user uploaded videos
         if(sn_media.userUploadedVideos.includes(file.type)){
             element.classList.add('tuuvam');
             element.removeAttribute('data-thumbnail');
             element.setAttribute('data-original', file.urls.original);
-            /* element.setAttribute('data-mp4', file.urls.mp4); */
-            /* element.setAttribute('data-webm', file.urls.webm); */
-            /* element.setAttribute('data-ogg', file.urls.ogg); */
+            // element.setAttribute('data-mp4', file.urls.mp4);
+            // element.setAttribute('data-webm', file.urls.webm);
+            // element.setAttribute('data-ogg', file.urls.ogg);
             element.setAttribute('data-poster', file.urls.poster);
             element.querySelector('img').setAttribute('src', file.urls.poster);
         }
 
-        /* mediaSNImages */
+
+        // console.log('---------------------->   file: ', file);
+
+
+
         if(sn_media.mediaSNImages.includes(file.type)){
-            element.classList.add('tsniam'); /* toggles media modal */
+            element.classList.add('tsniam'); // toggles media modal
             element.dataset.original = file.urls['original'];
             element.querySelector('img').setAttribute('alt', file.metas.title);
         }
+
+
+
         return element;
+
+        */
+
+
     },
 
     'getMediaPreviewURL': (file) => {
@@ -871,6 +1009,7 @@ window.sn_media = {
         if(file.urls['thumbnail']) { return file.urls['thumbnail']; }
         if(file.urls['poster']) { return file.urls['poster']; }
         if(file.urls['original']) { return file.urls['original']; }
+        console.log('file.urls: ', file.urls);
         return null;
     },
 
@@ -880,6 +1019,7 @@ window.sn_media = {
         sn_helpers.initContentEditables();
         sn_media.toggleDZPreviewContextMenusListener();
         sn_media.mediaWFileCheck();
+        sn_media.listenSetOutVendorVideoURL();
     },
 
     'setUserUploadedVideoViewerURLS': (target) => {
@@ -904,58 +1044,18 @@ sn_media.initMediaManager();
 
 
 
-/* ~~~~~~~~~~~~~~~~~~~~ media dropzones & sortables ~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~ media  sortables ~~~~~~~~~~~~~~~~~~~~ */
 
 if(sn_media.sn_mediaDZWs){
 
     for (let z = 0; z < sn_media.sn_mediaDZWs.length; z++) {
 
-        let dzid = sn_media.sn_mediaDZWs[z].closest('.snfw') ? sn_media.sn_mediaDZWs[z].closest('.snfw').id : 'global';
-
-        sn_media.dzWs[dzid] = sn_media.sn_mediaDZWs[z];
-        sn_media.dzs[dzid] = sn_media.sn_mediaDZWs[z].querySelector(".dropzone");
-        sn_media.sn_existingMedia[dzid] = sn_media.sn_mediaDZWs[z].querySelector('.sn_mediaExisting');
-        sn_media.sn_existingMedia[dzid] && sn_media.sn_existingMedia[dzid].innerText.length > 0 ? sn_media.sn_existingMedia[dzid] = JSON.parse(sn_media.sn_existingMedia[dzid].innerText) : sn_media.sn_existingMedia[dzid] = null;
-        console.log(sn_media.sn_existingMedia[dzid]);
-
-        sn_media.dzs[dzid].classList.remove('vendor-video-error');
-
-        sn_media.mediaDZObjects[dzid] = new Dropzone(sn_media.dzs[dzid], sn_media.dzOptions);
-
-        /* override createThumbnail function for heif or heic */
-        sn_media.mediaDZObjects[dzid].origCreateThumbnail = sn_media.mediaDZObjects[dzid].createThumbnail
-        sn_media.mediaDZObjects[dzid].createThumbnail = function(file, ...args) {
-            if (file.type === 'image/heif' || file.type === 'image/heic') {
-                heic2any({ blob: file, toType: 'image/jpeg' })
-                    .then(converted => sn_media.sn_media.mediaDZObjects[z].origCreateThumbnail(converted, ...args))
-                    .catch(() => sn_media.sn_media.mediaDZObjects[z].origCreateThumbnail(file, ...args))
-            } else {
-                sn_media.mediaDZObjects[dzid].origCreateThumbnail(file, ...args)
-            }
-        }
-
         if(sn_media.mediaDZSortable){
             console.log('there is a sortable');
 
-            sn_media.mediaDZSortables[dzid] = Sortable.create(sn_media.dzs[dzid], {
-                draggable: '.dz-preview',
-
-                onEnd: function (e) {
-
-                    document.body.setAttribute('data-mediaSorted', true);
-                    console.log('media sortable ended...');
-                    setTimeout(() => {
-                        document.body.removeAttribute('data-mediaSorted');
-                        sn_media.saveMediaSortData(dzid);
-                        sn_media.mediaWFileCheck(dzid);
-                        console.log('!!! --> mediaWFileCheck @ Sortable.onEnd: source');
-                    }, 500);
-                },
-            });
 
         }
 
-        console.log('marfle again:', sn_media.dzs[dzid]);
 
 
     }

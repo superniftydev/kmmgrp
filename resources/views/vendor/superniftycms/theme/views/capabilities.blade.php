@@ -70,18 +70,18 @@
 
     @section('css')
         @vite([
-          'resources/views/vendor/superniftycms/theme/vendor/lightgallery/css/lightgallery-bundle.css'
+          'resources/views/vendor/superniftycms/theme/static/js/lightgallery/css/lightgallery-bundle.css'
         ])
     @endsection
 
     @section('js')
         @vite([
-            'resources/views/vendor/superniftycms/theme/vendor/model-viewer.js',
-            'resources/views/vendor/superniftycms/theme/vendor/lightgallery/lightgallery.min.js',
-            'resources/views/vendor/superniftycms/theme/vendor/lightgallery/plugins/thumbnail/lg-thumbnail.min.js',
-            'resources/views/vendor/superniftycms/theme/vendor/lightgallery/plugins/zoom/lg-zoom.min.js',
-            'resources/views/vendor/superniftycms/theme/vendor/lightgallery/plugins/autoplay/lg-autoplay.min.js',
-            'resources/views/vendor/superniftycms/theme/vendor/lightgallery/plugins/fullscreen/lg-fullscreen.min.js',
+            'resources/views/vendor/superniftycms/theme/static/js/model-viewer.js',
+            'resources/views/vendor/superniftycms/theme/static/js/lightgallery/lightgallery.min.js',
+            'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/thumbnail/lg-thumbnail.min.js',
+            'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/zoom/lg-zoom.min.js',
+            'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/autoplay/lg-autoplay.min.js',
+            'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/fullscreen/lg-fullscreen.min.js',
         ])
     @endsection
 

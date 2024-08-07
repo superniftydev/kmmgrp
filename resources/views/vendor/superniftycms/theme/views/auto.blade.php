@@ -8,7 +8,11 @@
             </div>
         </header>
         @foreach($topic->content['sn_fso'] as $field_name)
-            @include('components.fields.'.$topic->content[$field_name]['type'].".section")
+            @php
+            if($topic->content[$field_name]['type'] !== 'media') $path = "components.fields.{$topic->content[$field_name]['type']}.section";
+            else $path = "components.fields.{$topic->content[$field_name]['type']}.{$topic->content[$field_name]['aft']}.section";
+            @endphp
+            @include($path, [ 'field_name' => $field_name, 'field' => $topic->content[$field_name] ])
         @endforeach
     </main>
     @include("components.footer")

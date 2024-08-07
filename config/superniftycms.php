@@ -49,6 +49,7 @@ return [
 
         [
             'functionality' => 'posts',
+            'blades' => [],
             'url' => 'blog',
             'label' => 'Blog Post',
             'plural' => 'Blog Posts',
@@ -57,6 +58,7 @@ return [
         ],
         [
             'functionality' => 'pages',
+            'blades' => [],
             'url' => '',
             'label' => 'Page',
             'plural' => 'Pages',
@@ -65,6 +67,7 @@ return [
         ],
         [
             'functionality' => 'team',
+            'blades' => [],
             'url' => 'team',
             'label' => 'Team Member',
             'plural' => 'Team',
@@ -73,6 +76,7 @@ return [
         ],
         [
             'functionality' => 'products',
+            'blades' => [],
             'url' => 'products',
             'label' => 'Product',
             'plural' => 'Products',
@@ -81,6 +85,7 @@ return [
         ],
         [
             'functionality' => 'machines',
+            'blades' => [],
             'url' => 'machines',
             'label' => 'Machine',
             'plural' => 'Machines',
@@ -89,6 +94,7 @@ return [
         ],
         [
             'functionality' => 'forms',
+            'blades' => [],
             'url' => null,
             'label' => 'Form',
             'plural' => 'Forms',
@@ -97,6 +103,7 @@ return [
         ],
         [
             'functionality' => 'components',
+            'blades' => [],
             'url' => null,
             'label' => 'Component',
             'plural' => 'Components',
@@ -105,6 +112,7 @@ return [
         ],
         [
             'functionality' => 'redirects',
+            'blades' => [],
             'url' => null,
             'label' => 'Redirect',
             'plural' => 'Redirects',
@@ -313,47 +321,52 @@ return [
         "accepted" => [
 
             "images" => [
-                "image/gif", # .gif
-                "image/jpeg", #.jpg, .jpeg
-                "image/png", # .png
-                "image/svg+xml", # .svg [ https://www.opswat.com/blog/svg-unveiled-understanding-xxe-vulnerabilities-and-defending-your-codebase ]
+                "GIF" => "image/gif", # .gif
+                "JPG" => "image/jpeg", #.jpg, .jpeg
+                "PNG" => "image/png", # .png
+                "SVG" => "image/svg+xml", # .svg [ https://www.opswat.com/blog/svg-unveiled-understanding-xxe-vulnerabilities-and-defending-your-codebase ]
 
                 # imagemagick driver required for below
-                # "image/heic", # .heic
-                # "image/heif", # .heif
-                # "image/webp", # .webp
+                # "HEIC" => "image/heic", # .heic
+                # "HEIF" => "image/heif", # .heif
+                # "WEBP" => "image/webp", # .webp
             ],
 
             "documents" => [
-                "application/pdf", # .pdf
-                "application/msword", # .doc
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", # .docx
-                "application/vnd.ms-powerpoint", # .ppt
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation", # .pptx
-                "text/plain", # .txt
-                "text/vtt", # .vtt
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", # .xlsx
-                "application/vnd.ms-excel", # .xls
+                "PDF" => "application/pdf", # .pdf
+                "DOC" => "application/msword", # .doc
+                "DOCX" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document", # .docx
+                "PPT" => "application/vnd.ms-powerpoint", # .ppt
+                "PPTX" => "application/vnd.openxmlformats-officedocument.presentationml.presentation", # .pptx
+                "TXT" => "text/plain", # .txt
+                "VTT" => "text/vtt", # .vtt
+                "XLSX" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", # .xlsx
+                "XLS" => "application/vnd.ms-excel", # .xls
             ],
 
             "videos" => [
-                "mp4" => "video/mp4",
-                # "video/x-msvideo", # .avi
-                # "video/3gpp", # .3gp
-                # "video/x-ms-wmv", # .wmv
-                # "video/quicktime", # .mov
-                # "video/ogg", # .ogg
-                # "video/MP2T", # .ts
-                # "video/webm", # .webm
-                # "audio/*", # .audio
+                "MP4" => "video/mp4",
+                # "AVI" => "video/x-msvideo", # .avi
+                # "3GP" => "video/3gpp", # .3gp
+                # "WMV" => "video/x-ms-wmv", # .wmv
+                # "MOV" => "video/quicktime", # .mov
+                # "OGG" => "video/ogg", # .ogg
+                # "TS" => "video/MP2T", # .ts
+                # "WEBM" => "video/webm", # .webm
+                # "AUDIO" => "audio/*", # .audio
             ],
 
             "models" => [
-                "model/*", # .glb, etc...
+                "GLB" => "model/*", # .glb, etc...
             ],
 
-            "youtube" => [ "youtube" ],
-            "vimeo" => [ "vimeo" ],
+            "youtube" => [
+                "YOUTUBE" => "youtube"
+            ],
+
+            "vimeo" => [
+                "VIMEO" => "vimeo"
+            ],
 
         ],
 

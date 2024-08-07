@@ -3,26 +3,33 @@
 
 
 @if($field['type'] === 'media')
-
     <?php
         $accepted_array = config("superniftycms.uploads.accepted.".($field['aft'] ?? "images"));
-        if(is_array($accepted_array)) $accepted = implode(",", $accepted_array);
+        if(is_array($accepted_array)) {
+            $accepted = implode("|", $accepted_array);
+            $accepted_error = implode(', ', array_keys($accepted_array)).' ONLY PLEASE!';
+        }
     ?>
 
-<div class="snfw" id="snfw-{{ Str::slug($field_name) }}" data-field="{{ $field_name }}" data-type="{{ $field['type'] }}" data-aft="{{ $field['aft'] }}" data-accepted="{{ $accepted ?? '*' }}">
+<div class="snfw sort" id="snfw-{{ Str::slug($field_name) }}" data-field="{{ $field_name }}" data-type="{{ $field['type'] }}" data-aft="{{ $field['aft'] }}" data-accepted="{{ $accepted ?? '*' }}" data-error="{{ $accepted_error ?? 'WRONG FILE TYPE' }}">
     <div class="settings">
         <div class="h"></div>
         <div class="n" contenteditable>{{ $field_name }}</div>
         <i class="x"></i>
     </div>
-    <div class="snfwi drop">
-        @include('dropzone.dropzone', [ 'media' => $mediaJSON[$field_name] ?? '' ])
+    <div class="snfwi">
+        @if($field['aft'] === 'youtube' || $field['aft'] === 'vimeo')
+            @include('media.mediazone-click', [ 'media' => $mediaJSON[$field_name] ?? '' ])
+        @else
+            @include('media.mediazone-drop', [ 'media' => $mediaJSON[$field_name] ?? '' ])
+        @endif
     </div>
 </div>
 
+
 @elseif($field['type'] === 'text' || $field['type'] === 'richtext')
 
-    <div class="snfw transcriptor" id="snfw-{{ Str::slug($field_name) }}" data-field="{{ $field_name }}" data-type="{{ $field['type'] ?? 'text' }}">
+    <div class="snfw transcriptor sort" id="snfw-{{ Str::slug($field_name) }}" data-field="{{ $field_name }}" data-type="{{ $field['type'] ?? 'text' }}">
         <div class="settings">
             <div class="h"></div>
             <div class="n" contenteditable>{{ $field_name }}</div>
@@ -51,7 +58,7 @@
 
 @elseif($field['type'] === 'data')
 
-    <div class="snfw" id="{{ Str::slug($field_name) }}-snfw" data-field="{{ $field_name }}" data-type="data">
+    <div class="snfw sort" id="{{ Str::slug($field_name) }}-snfw" data-field="{{ $field_name }}" data-type="data">
         <div class="settings">
             <div class="h"></div>
             <div class="n" contenteditable>{{ $field_name }}</div>

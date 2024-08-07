@@ -67,26 +67,10 @@ window.sn_helpers = {
 
         sn_helpers.contextMenuTarget = e.target;
 
-        /* files */
-        if (requestedContextMenu === 'files') {
 
-            sn_helpers.contextMenuTarget = e.target;
-            sn_helpers.contextMenuTarget.classList.add('rclick');
-
-            sn_helpers.contextMenu = document.querySelector("#sn_contextMenus ul#sn_CMFiles");
-            console.log('sn_helpers.contextMenu:', sn_helpers.contextMenu);
-            sn_helpers.contextMenu.setAttribute('data-locked', sn_helpers.contextMenuTarget.dataset.locked);
-            sn_helpers.contextMenu.setAttribute('data-target_name', sn_helpers.contextMenuTarget.dataset.name);
-            sn_helpers.contextMenu.setAttribute('data-target_type', sn_helpers.contextMenuTarget.dataset.type);
-
-            if (sn_helpers.contextMenuTarget.closest("[data-parent_path]")) {
-                sn_helpers.contextMenu.setAttribute('data-parent', sn_helpers.contextMenuTarget.closest("[data-parent_path]").dataset.parent_path);
-            }
-
-        }
 
         /* front end */
-        else if (requestedContextMenu === 'fe') {
+        if (requestedContextMenu === 'fe') {
             sn_helpers.contextMenu = document.querySelector("#sn_contextMenus ul#sn_CMFe");
             sn_helpers.contextMenuTarget = e.target.closest("[data-sn*='field|']");
             sn_helpers.contextMenu.classList.add('active');
@@ -96,10 +80,10 @@ window.sn_helpers = {
         else if (requestedContextMenu === 'DZmedia') {
             sn_helpers.contextMenu = document.querySelector("#sn_contextMenus ul#sn_CMDZMedia");
             sn_helpers.contextMenu.setAttribute('data-media_id', sn_helpers.contextMenuTarget.closest("[data-media_id]").dataset.media_id);
-            sn_media.setActiveMediaData(sn_helpers.contextMenuTarget);
+            sn_media.setActiveMediaData(sn_helpers.contextMenuTarget.closest("[data-media_id]"));
 
             /* toggle media inclusion with topic - global media that has already been selected for a target */
-            if (sn_helpers.contextMenuTarget.closest('.dz-preview.selected')) {
+            if (sn_helpers.contextMenuTarget.closest('.mz-preview.selected')) {
                 sn_helpers.contextMenu.setAttribute('data-selected', 'y');
             }
 
@@ -442,33 +426,6 @@ window.sn_helpers = {
             }
         }
 
-        /* media title update from modal */
-        if (e.target.id === 'media-title-contenteditable') {
-            sn_media.activeMedia.title = e.target.innerText;
-
-            let ces = document.querySelectorAll("[data-media_id='" + sn_media.activeMedia.media_id + "']");
-            for (let c = 0; c < ces.length; c++) {
-                ces[c].dataset.title = e.target.innerText;
-                let dzfnce = ces[c].querySelector('.dz-filename');
-                if (dzfnce) {
-                    dzfnce.dataset.title = e.target.innerText;
-                    dzfnce.innerText = e.target.innerText;
-                }
-                // if(e.target.innerText.length > 1){
-                //     ces[c].querySelector(".dz-abbr").innerText = e.target.innerText[0].toUpperCase() + e.target.innerText[1].toLowerCase();
-                // }
-            }
-
-        }
-
-        /* media description update - currently can only occur in the modal */
-        if (e.target.id === 'media-description-contenteditable') {
-            sn_media.activeMedia.description = e.target.innerText;
-            let ces = document.querySelectorAll("[data-media_id='" + sn_media.activeMedia.media_id + "']");
-            for (let c = 0; c < ces.length; c++) {
-                ces[c].dataset.description = e.target.innerText;
-            }
-        }
 
         sn_helpers.setCECounter(e.target);
     },
@@ -490,140 +447,9 @@ window.sn_helpers = {
 
     'contenteditableBlur': (e) => {
 
-        /* todo: this might be causing an error */
-
-        if (!e.target.classList.contains('cm-content')) {
-
-            e.preventDefault();
-            e.preventDefault();
-            e.stopPropagation();
-
-            /* contenteditables have hidden textareas as the next sibling which are triggered to post the form when changed */
-            if (e.target.isContentEditable) {
-
-                /* dbManager row update */
-                if (e.target.closest('#dbManager') && e.target.dataset.cv !== e.target.innerText) {
-                    sn_helpers.saveDBRow(e.target);
-                }
-
-                /* if outside vendor video and there is no vendor video id */
-                else if (
-                    (sn_media.activeMedia && sn_media.activeMedia.type) &&
-                    (sn_media.activeMedia.type === 'vimeo' || sn_media.activeMedia.type === 'youtube') &&
-                    (sn_media.outsideVendorVideoID.innerText === 'new' || sn_media.outsideVendorVideoID.innerText === '')
-                ) {
-                    return true;
-                }
-
-                /* vendor video id blur - youtube or vimeo to start */
-                else if (
-                    e.target.id === 'outsideVendorVideoID' &&
-                    sn_media.outsideVendorVideoID.innerText !== 'new' &&
-                    sn_media.outsideVendorVideoID.innerText !== ''
-                ) {
-
-                    /* 1. update sn_media.activeMedia */
-                    sn_media.activeMedia.vendor_media_id = e.target.innerText;
-
-                    /* 2. update target dataset with vendor media id */
-                    e.target.dataset.vendor_media_id = e.target.innerText;
-
-                    /* 3. get vimeo poster - async and promise ignored */
-                    if (sn_media.activeMedia.type === 'vimeo') {
-
-                        /* contenteditable --> #outsideVendorVideoID, img -> #snDocumentImageViewer img */
-                        sn_media.setVimeoPosterURL(e.target.innerText, document.querySelector("#snDocumentImageViewer img"));
-                    }
-
-                    /* 3. get youtube poster - sync */
-                    else if (sn_media.activeMedia.type === 'youtube') {
-
-                        /* contenteditable --> #outsideVendorVideoID, img -> #snDocumentImageViewer img */
-                        sn_media.setYouTubePosterURL(e.target.innerText, document.querySelector("#snDocumentImageViewer img"));
-
-                    }
-
-                    /* 4. populate the iframe src url in the modal */
-                    sn_media.setOutsideVendorVideoURL();
-
-                    /* 5. create new preview element if new video */
-                    if (sn_media.activeMedia.media_id === 'new') {
-                        let mockFile = {
-                            media_id: 'new',
-                            // meta: {},
-                            type: sn_media.activeMedia.type,
-                            vendor_media_id: sn_media.outsideVendorVideoID.innerText,
-                        };
-
-                        /* xhr response will have this data:
-                        media_id : "98c98c7d-d525-460a-b989-d84828c1bf0c"
-                        created_at : "2023.03.27 @ 06:48:49"
-                        created_by : "989c2170-269a-4cfb-b6f4-25bb8906359c"
-                        ext : "vimeo"
-                        location : "vimeo"
-                        new_topic : false
-                        original_mime_type : "N/A"
-                        topic_id : "98c98670-1d75-4eb5-8772-7f28e2d0c31f"
-                        status : 200
-                        updated_at : "2023.03.27 @ 06:48:49"
-                        urls : null
-                         */
-
-                        sn_media.createMediaPreviewElementNotDZFile(mockFile, e.target);
-                    }
-
-                    /* 6. save media changes to the server */
-                    sn_media.saveMedia();
-
-                }
-
-                /* media meta */
-                else if (e.target.closest('.media-input')) {
-                    if (Object.is(sn_media.activeMedia['metas'], undefined)) {
-                        sn_media.activeMedia['metas'] = {};
-                    }
-                    sn_media.activeMedia['metas'][e.target.dataset.meta] = e.target.innerText;
-                    sn_media.saveMedia();
-                }
+        console.log('deprecated...')
 
 
-
-
-
-                    /* deprecated...
-                    front end field settings - also remove contenteditable if front end
-                    if (e.target.closest("[data-sn*='field|']")) {
-                        if (e.target.dataset.cv !== e.target.innerText) {
-                            let data = sn_helpers.getTextFieldSettings(e.target);
-                            data['field_value'] = e.target.innerText;
-                            sn_helpers.saveTextFieldValue(data);
-                        }
-
-                        e.target.removeAttribute('contenteditable');
-                    } */
-
-
-                    /* this is very likely deprecated
-                    let nextSibling = e.target.nextElementSibling;
-                    if (nextSibling) {
-                        let nextSiblingType = nextSibling.tagName.toLowerCase();
-
-                        /* standard field with a contenteditable and hidden textarea
-                        if (nextSiblingType === 'textarea' && nextSibling.classList.contains('update')) {
-                            nextSibling.value = e.target.innerText;
-                            nextSibling.dispatchEvent(new Event('change'));
-                        }
-
-                        /* special cases such as media titles and descriptions
-                        else {
-                            console.log('special cases to come...');
-                        }
-                    }*/
-
-
-                e.target.dataset.cv = '';
-            }
-        }
     },
 
     'initContentEditables': () => {
@@ -978,7 +804,7 @@ window.addEventListener(
             }
 
             if (document.body.hasAttribute('data-media_modal_status')) {
-                sn_media.toggleMediaModal(e);
+                sn_media.toggleMediaModal(e.target);
             }
 
         }
@@ -1027,15 +853,11 @@ document.addEventListener("mouseup", (e) => {
     if(sn_helpers.contextMenuTarget) {
         sn_helpers.contextMenuTarget.classList.remove('rclick');
     }
+    console.log("left button click on: ", e.target);
 
     switch (e.button) {
 
-        // console.log("left button click");
         case 0:
-
-            if (e.target.closest('.snfwi.drop')) {
-                sn_media.activeDZ = e.target.closest('.snfwi.drop').querySelector('.dropzone');
-            }
 
             if (typeof sn_topics !== "undefined") {
                 if (!Object.is(sn_topics.warnDeleteChildTopicButton, null) && !e.target.closest('.warn')) {
@@ -1058,7 +880,7 @@ document.addEventListener("mouseup", (e) => {
             }
 
             /* open media modal */
-            else if (e.target.closest('.dz-preview') && !document.body.hasAttribute('data-mediaSorted')) {
+            else if (e.target.closest('.mz-preview') && !document.body.hasAttribute('data-mediaSorted')) {
                 sn_media.toggleMediaModal(e);
             }
 
@@ -1114,34 +936,6 @@ document.addEventListener("mouseup", (e) => {
                 sn_helpers.closeContextMenu();
             }
 
-            /* rename directory or file */
-            else if (e.target.classList.contains('rename')) {
-                if (sn_helpers.contextMenuTarget.dataset.cm === 'directory' || sn_helpers.contextMenuTarget.dataset.cm === 'file') {
-                    sn_helpers.contextMenuTarget.closest('li').classList.add('rename');
-                }
-                console.log('rename file...');
-                sn_files.initFileRename(sn_helpers.contextMenuTarget);
-            }
-
-            /* duplicate directory or file */
-            else if (e.target.classList.contains('duplicate')) {
-                if (sn_helpers.contextMenuTarget.dataset.cm === 'directory' || sn_helpers.contextMenuTarget.dataset.cm === 'file') {
-                    sn_helpers.contextMenuTarget.closest('li').classList.add('duplicate');
-                }
-                e.target.classList.add('active');
-                console.log('duplicate file...');
-                sn_files.initDuplicateDirectoryOrFile(sn_helpers.contextMenuTarget);
-            }
-
-            /* create directory or file */
-            else if (e.target.classList.contains('new')) {
-                if (sn_helpers.contextMenuTarget.dataset.cm === 'directory' || sn_helpers.contextMenuTarget.dataset.cm === 'file') {
-                    sn_helpers.contextMenuTarget.closest('li').classList.add('new');
-                }
-                console.log('creating directory or file...');
-                e.target.classList.add('active');
-                sn_files.initCreateDirectoryOrFile(e.target.dataset.cm);
-            }
 
             /* toggling media inclusion in topic field */
             else if (e.target.closest('.add-to-topic-field')) {
@@ -1150,32 +944,12 @@ document.addEventListener("mouseup", (e) => {
                 sn_helpers.closeContextMenu();
             }
 
-            /* copy db cell content */
-            else if (e.target.classList.contains('copy-db-cell-content')) {
-                e.target.classList.add('copied');
-                navigator.clipboard.writeText(sn_helpers.contextMenuTarget.innerText);
-                setTimeout(() => {
-                    sn_helpers.closeContextMenu();
-                    e.target.classList.remove('copied');
-                }, 1000);
-            }
-
-            /* delete db record */
-
-            else if (e.target.classList.contains('delete-db-record')) {
-                if (!e.target.classList.contains('warn')) {
-                    e.target.classList.add('warn');
-                    sn_helpers.contextMenuTarget.focus();
-                } else {
-                    console.log('delete db record...');
-                    sn_helpers.sn_destroyDBRow(sn_helpers.contextMenuTarget.closest('tr'));
-                    sn_helpers.closeContextMenu();
-                }
-            } else {
+            else {
                 sn_helpers.closeContextMenu();
             }
 
             break;
+
         case 1:
             console.log("Middle button clicked.");
             break;
@@ -1186,6 +960,8 @@ document.addEventListener("mouseup", (e) => {
         default:
             console.log(`Unknown button code: ${e.button}`);
     }
+
+    return true;
 
 
 });
@@ -1221,11 +997,6 @@ document.addEventListener("contextmenu", function (e) {
             /* topic */
             if (e.target.dataset.cm === 'topic') {
                 requestedContextMenu = 'topic';
-            }
-
-            /* files */
-            if (e.target.dataset.cm === 'directory' || e.target.dataset.cm === 'file') {
-                requestedContextMenu = 'files';
             }
 
             /* dropzone media */

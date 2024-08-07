@@ -29,9 +29,9 @@
 
     <?php # dd($allMedia); ?>
 
-    @include('dropzone.dropzone', [ 'media' => $allMedia ])
-    @include('dropzone.template')
-    @include('dropzone.modal')
+    @include('media.dropzone', [ 'media' => $allMedia ])
+    @include('media.template')
+    @include('media.modal')
 
 </x-superniftycmsadmin-layout>
 

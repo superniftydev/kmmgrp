@@ -21,6 +21,8 @@ export default defineConfig({
                 'resources/views/vendor/superniftycms/admin/js/sn_topicManager.js',
                 'resources/views/vendor/superniftycms/admin/js/sn_transcriptorField.js',
 
+                'resources/views/vendor/superniftycms/admin/js/sncms_dz.js',
+
                 /* frontend admin */
                 'resources/views/vendor/superniftycms/admin/css/sncms_fe_admin.css',
                 'resources/views/vendor/superniftycms/admin/js/sncms_fe_admin.js',
@@ -29,7 +31,7 @@ export default defineConfig({
                 'resources/views/vendor/superniftycms/admin/css/sncms_fe.css',
                 'resources/views/vendor/superniftycms/admin/js/sncms_fe.js',
 
-                /* theme */
+                /* theme -- comment while working on backend -- */
                 'resources/views/vendor/superniftycms/theme/css/theme.css',
                 'resources/views/vendor/superniftycms/theme/js/theme.js',
                 'resources/views/vendor/superniftycms/theme/js/contact.js',
@@ -38,6 +40,18 @@ export default defineConfig({
                 'resources/views/vendor/superniftycms/theme/js/modelviewer.js',
                 'resources/views/vendor/superniftycms/theme/js/newsletter.js',
                 'resources/views/vendor/superniftycms/theme/js/welcome-header-video.js',
+
+                /* static ---- comment while working on back end ---- */
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/css/lightgallery-bundle.css',
+                'resources/views/vendor/superniftycms/theme/static/js/model-viewer.js',
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/lightgallery.min.js',
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/thumbnail/lg-thumbnail.min.js',
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/zoom/lg-zoom.min.js',
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/autoplay/lg-autoplay.min.js',
+                'resources/views/vendor/superniftycms/theme/static/js/lightgallery/plugins/fullscreen/lg-fullscreen.min.js',
+
+
+
 
             ],
             refresh: true,

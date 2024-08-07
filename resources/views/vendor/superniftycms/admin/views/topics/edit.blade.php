@@ -73,6 +73,7 @@
                             the settings for this topic.</p>
                     @endif
 
+                    {{--
                     @if(is_array($sn_view_blades))
                     <div id="bladeFields">
                         <div id="bladeW" class="labelSelect">
@@ -89,6 +90,7 @@
                     @else
                         <input id="topicBlade" type="hidden" name="blade" value="{{ $topic->blade ?? 'auto' }}">
                     @endif
+                    --}}
                 </section>
 
                 <section id="topicMetas" class="panel">
@@ -107,24 +109,27 @@
                 $source_data_field['type'] = 'data';
                 $source_text_field['type'] = 'text';
                 $source_richtext_field['type'] = 'richtext';
-                $source_image_field = [ 'type' => 'media', 'aft' => 'images' ];
-                $source_mp4_field = [ 'type' => 'media', 'aft' => 'videos' ];
+                $source_images_field = [ 'type' => 'media', 'aft' => 'images' ];
+                $source_documents_field = [ 'type' => 'media', 'aft' => 'documents' ];
+                $source_videos_field = [ 'type' => 'media', 'aft' => 'videos' ];
                 $source_youtube_field = [ 'type' => 'media', 'aft' => 'youtube' ];
                 $source_vimeo_field = [ 'type' => 'media', 'aft' => 'vimeo' ];
 
             @endphp
             @include("topics.field", [ "field_name" => "new-text-field", "field" => $source_text_field, "value" => '', "media" => [], "mediaJSON" => [] ])
             @include("topics.field", [ "field_name" => "new-rich-text-field", "field" => $source_richtext_field, "value" => '', "media" => [], "mediaJSON" => [] ])
-            @include("topics.field", [ "field_name" => "new-image-field", "field" => $source_image_field, "value" => '', "media" => [], "mediaJSON" => [] ])
-            @include("topics.field", [ "field_name" => "new-mp4-field", "field" => $source_mp4_field, "value" => '', "media" => [], "mediaJSON" => [] ])
+
+
+            @include("topics.field", [ "field_name" => "new-images-field", "field" => $source_images_field, "value" => '', "media" => [], "mediaJSON" => [] ])
             @include("topics.field", [ "field_name" => "new-youtube-field", "field" => $source_youtube_field, "value" => '', "media" => [], "mediaJSON" => [] ])
             @include("topics.field", [ "field_name" => "new-vimeo-field", "field" => $source_vimeo_field, "value" => '', "media" => [], "mediaJSON" => [] ])
+            @include("topics.field", [ "field_name" => "new-documents-field", "field" => $source_documents_field, "value" => '', "media" => [], "mediaJSON" => [] ])
             @include("topics.field", [ "field_name" => "new-data-field", "field" => $source_data_field, "value" => '', "media" => [], "mediaJSON" => [] ])
 
             </div>
         </div>
     </div>
     <?php $topic = $topic->getAttributes(); $content = json_decode($topic['content'], true); ?>
-    @include('dropzone.template')
-    @include('dropzone.modal')
+    @include('media.template')
+    @include('media.modal')
 </x-superniftycmsadmin-layout>

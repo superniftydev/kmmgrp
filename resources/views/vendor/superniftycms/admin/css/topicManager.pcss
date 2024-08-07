@@ -779,7 +779,7 @@ ul.tools li {
                 margin: 0 auto .25rem 0;
             }
 
-            .sncms-dropper {
+            .mediazone {
                 position: relative;
                 display: flex;
                 flex-direction: column;
@@ -792,6 +792,7 @@ ul.tools li {
                 transition: all 250ms ease-in-out;
                 overflow: hidden;
                 aspect-ratio: 1.91/1;
+                padding: 0;
 
                 &:before {
                 }
@@ -810,7 +811,7 @@ ul.tools li {
                     }
                 }
 
-                &.bad-file-type {
+                &.bft {
                     background-color: var(--color-red-200);
                     &:before {
                         position: absolute;
@@ -826,7 +827,7 @@ ul.tools li {
                         text-align: center;
                         text-transform: uppercase;
                         border-radius: .25rem;
-                        content: 'JPGs, PNGS or GIFs only please!';
+                        content: attr(data-error);
                         pointer-events: none;
                     }
                     img {
@@ -837,7 +838,7 @@ ul.tools li {
 
             }
 
-            #progressBarW {
+            .progressBarW {
                 position: absolute;
                 bottom:0;
                 left:0;
@@ -847,7 +848,7 @@ ul.tools li {
                 width: 100%;
                 overflow: hidden;
 
-                #progressBar {
+                .progressBar {
                     position: absolute;
                     top: 0;
                     left: 0;
